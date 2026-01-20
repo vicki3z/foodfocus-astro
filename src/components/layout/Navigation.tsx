@@ -65,20 +65,27 @@ const navItems: NavItem[] = [
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const baseUrl = import.meta.env.BASE_URL;
+  
+  // Helper to prepend baseUrl to internal paths
+  const withBase = (path: string) => {
+    if (path === "/") return baseUrl;
+    return `${baseUrl}${path.slice(1)}`; // Remove leading slash and prepend baseUrl
+  };
 
   return (
     <>
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="/" className="shrink-0 flex gap-2">
+        <a href={baseUrl} className="shrink-0 flex gap-2">
           <img
-            src="/images/be-media-logo.png"
+            src={`${baseUrl}images/be-media-logo.png`}
             alt="Bemedia Focus logo"
             className="h-10 pr-0.5"
           />
           <div className="border-r-2 border-gray-200" />
           <img
-            src="/images/FFT-logo.png"
+            src={`${baseUrl}images/FFT-logo.png`}
             alt="Food Focus Thailand logo"
             className="h-10"
           />
@@ -113,7 +120,7 @@ export function Navigation() {
                           <li key={child.href}>
                             <NavigationMenu.Link asChild>
                               <a
-                                href={child.href}
+                                href={withBase(child.href)}
                                 className="block p-3 rounded-md hover:bg-[#CBE5D5] transition-colors"
                               >
                                 <div className="font-medium text-[#2d3319]">
@@ -129,7 +136,7 @@ export function Navigation() {
                 ) : (
                   <NavigationMenu.Link asChild>
                     <a
-                      href={item.href}
+                      href={withBase(item.href!)}
                       className="px-3 py-2 text-sm font-medium hover:text-[#3A5F47] transition-colors rounded-md"
                     >
                       {item.label}
@@ -262,7 +269,7 @@ export function Navigation() {
                       {item.children.map((child) => (
                         <a
                           key={child.href}
-                          href={child.href}
+                          href={withBase(child.href)}
                           className="block px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md"
                         >
                           {child.label}
@@ -272,7 +279,7 @@ export function Navigation() {
                   </details>
                 ) : (
                   <a
-                    href={item.href}
+                    href={withBase(item.href!)}
                     className="block px-3 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-md"
                   >
                     {item.label}

@@ -4,6 +4,8 @@ import { Header } from '../components/layout/Header';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/layout/Container.astro';
 import { Button } from '../components/ui/Button';
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
@@ -19,7 +21,7 @@ import { Button } from '../components/ui/Button';
         Sorry, the page you're looking for doesn't exist or has been moved.
       </p>
       <Button asChild>
-        <a href="/">Back to Homepage</a>
+        <a href={baseUrl}>Back to Homepage</a>
       </Button>
     </div>
   </Container>

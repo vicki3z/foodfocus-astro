@@ -9,10 +9,12 @@ interface Props {
   publishedTime?: string;
 }
 
+const baseUrl = import.meta.env.BASE_URL;
+
 const {
   title,
   description = "Food Focus Thailand - Your source for food industry news and insights",
-  image = "/images/og-default.jpg",
+  image = `${baseUrl}images/og-default.jpg`,
   type = "website",
   publishedTime,
 } = Astro.props;
@@ -28,7 +30,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Primary Meta Tags -->

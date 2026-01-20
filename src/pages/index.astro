@@ -17,6 +17,8 @@ import {
 } from "../lib/queries";
 import type { Magazine } from "../types/generated/graphql";
 
+const baseUrl = import.meta.env.BASE_URL;
+
 // Fetch all homepage data at build time
 const [
   magazineData,
@@ -24,8 +26,6 @@ const [
   whatsInData,
   newsData,
   advertisementData,
-  roadmapsData,
-  proseriesData,
 ] = await Promise.all([
   fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
   fetchGraphQL<any>(GET_BANNERS).catch(() => null),
@@ -41,9 +41,10 @@ const [
     first: 3,
     category: "advertisement",
   }).catch(() => null),
-  fetchGraphQL<any>(GET_ROADMAPS, { first: 3 }).catch(() => null),
-  fetchGraphQL<any>(GET_PROSERIES, { first: 3 }).catch(() => null),
 ]);
+
+const roadmapsData = []
+const proseriesData = []
 
 // Process magazine data
 const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
@@ -61,14 +62,7 @@ const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
 
 // Process banners - filter by prefix
 const allBanners = bannersData?.banners?.nodes || [];
-console.log("allBanners", allBanners.length);
-console.log(
-  "topBanners",
-  allBanners.filter(
-    (b: any) =>
-      b.title?.startsWith("T_") && b.bannerFields?.image?.node?.sourceUrl,
-  ),
-);
+
 const topBanners = allBanners
   .filter((b: any) => b.title?.startsWith("T_"))
   .map((b: any) => ({
@@ -95,7 +89,7 @@ const whatsInArticles = (whatsInData?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || "What's In",
 }));
@@ -106,7 +100,7 @@ const newsArticles = (newsData?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || "News",
 }));
@@ -126,7 +120,7 @@ const roadmapItems = (roadmapsData?.roadmaps?.nodes || []).map((item: any) => ({
   title: item.title,
   summary: item.postSummary?.summary || "",
   slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: item.featuredImage?.node?.altText || "",
   link: item.link,
 }));
@@ -137,7 +131,7 @@ const proseriesItems = (proseriesData?.proseries?.nodes || []).map(
     title: item.title,
     summary: item.postSummary?.summary || "",
     slug: item.slug,
-    image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+    image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
   }),
@@ -148,13 +142,13 @@ const configurableSections = [
   {
     type: "roadmap",
     label: "Roadmap",
-    href: "/roadmap",
+    href: `${baseUrl}roadmap`,
     items: roadmapItems,
   },
   {
     type: "proseries",
     label: "Proseries",
-    href: "/proseries",
+    href: `${baseUrl}proseries`,
     items: proseriesItems,
   },
 ];

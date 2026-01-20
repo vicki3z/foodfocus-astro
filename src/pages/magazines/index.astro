@@ -9,6 +9,7 @@ import { fetchGraphQL } from "../../lib/graphql";
 import { GET_ALL_MAGAZINES, GET_PAGE_BY_SLUG } from "../../lib/queries";
 
 const pageTitle = "Magazines";
+const baseUrl = import.meta.env.BASE_URL;
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -26,7 +27,7 @@ const magazines = (data?.magazines?.nodes || []).map((magazine: any) => ({
   title: magazine.title,
   date: magazine.date,
   image:
-    magazine.magazines?.image?.node?.sourceUrl || "/images/placeholder.jpg",
+    magazine.magazines?.image?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: magazine.magazines?.image?.node?.altText || magazine.title || "",
   link: magazine.magazines?.link || "",
   magazineNo: magazine.magazines?.magazineNo || 0,

@@ -13,13 +13,14 @@ interface Props {
 }
 
 const { magazine } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <section class="relative py-12 lg:py-16 overflow-hidden">
   <!-- Background Pattern -->
   <div class="absolute inset-0 opacity-20">
     <img
-      src="/images/header-bg.svg"
+      src={`${baseUrl}images/header-bg.svg`}
       alt=""
       class="w-full h-full object-cover"
       aria-hidden="true"
@@ -91,13 +92,13 @@ const { magazine } = Astro.props;
           class="flex flex-wrap items-center justify-center lg:justify-start gap-6"
         >
           <img
-            src="/images/FFT-logo.png"
+            src={`${baseUrl}images/FFT-logo.png`}
             alt="Food Focus Thailand"
             class="h-10 opacity-90"
             loading="lazy"
           />
           <img
-            src="/images/be-media-logo.png"
+            src={`${baseUrl}images/be-media-logo.png`}
             alt="BE Media"
             class="h-8 opacity-90"
             loading="lazy"

@@ -10,6 +10,7 @@ import { GET_POSTS_BY_CATEGORY } from "../../lib/queries";
 
 const pageTitle = "News";
 const categorySlug = "news";
+const baseUrl = import.meta.env.BASE_URL;
 
 // Fetch posts
 const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
@@ -22,7 +23,7 @@ const articles = (data?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || pageTitle,
 }));

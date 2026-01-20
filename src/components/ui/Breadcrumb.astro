@@ -10,13 +10,21 @@ interface Props {
 }
 
 const { items, class: className = "" } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
+
+// Helper to prepend baseUrl to internal paths
+const withBase = (path: string) => {
+  if (!path || path.startsWith("http")) return path;
+  if (path === "/") return baseUrl;
+  return `${baseUrl}${path.slice(1)}`;
+};
 ---
 
 <nav aria-label="Breadcrumb" class:list={["text-sm", className]}>
   <ol class="flex items-center flex-wrap gap-1">
     <li class="flex items-center">
       <a
-        href="/"
+        href={baseUrl}
         class="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors flex items-center"
         aria-label="Home"
       >
@@ -29,7 +37,7 @@ const { items, class: className = "" } = Astro.props;
           <span class="mx-2 text-[var(--color-text-muted)]">/</span>
           {item.href && index < items.length - 1 ? (
             <a
-              href={item.href}
+              href={withBase(item.href)}
               class="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
             >
               {item.label}

@@ -19,6 +19,7 @@ interface Props {
 }
 
 const { articles, title = "What's In", seeAllHref = "/whats-in" } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
 
 const [featured, ...rest] = articles;
 const sideArticles = rest.slice(0, 3);
@@ -34,7 +35,7 @@ const sideArticles = rest.slice(0, 3);
         {title}
       </h2>
       <a
-        href={seeAllHref}
+        href={`${baseUrl}${seeAllHref.slice(1)}`}
         class="text-sm font-medium text-[var(--color-primary)] hover:underline flex items-center gap-1"
       >
         See all
@@ -64,7 +65,7 @@ const sideArticles = rest.slice(0, 3);
             category={featured.category || "What's In"}
             title={featured.title}
             excerpt={featured.excerpt}
-            href={`/whats-in/${featured.slug}`}
+            href={`${baseUrl}whats-in/${featured.slug}`}
             variant="vertical"
             class="lg:flex-1"
           />
@@ -81,7 +82,7 @@ const sideArticles = rest.slice(0, 3);
               category={article.category || "What's In"}
               title={article.title}
               excerpt={article.excerpt}
-              href={`/whats-in/${article.slug}`}
+              href={`${baseUrl}whats-in/${article.slug}`}
               variant="horizontal"
             />
           ))

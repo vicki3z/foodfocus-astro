@@ -10,6 +10,7 @@ import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_SEMINARS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 
 const pageTitle = "Seminar";
+const baseUrl = import.meta.env.BASE_URL;
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -43,12 +44,12 @@ const articles = (data?.eventYear?.seminars?.nodes || []).map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
   imageAlt: item.featuredImage?.node?.altText || "",
   category: pageTitle,
 }));
 
-const breadcrumbs = [{ label: pageTitle, href: "/seminar" }, { label: String(currentYear) }];
+const breadcrumbs = [{ label: pageTitle, href: `${baseUrl}seminar` }, { label: String(currentYear) }];
 ---
 
 <BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
