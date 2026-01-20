@@ -1,5 +1,6 @@
 ---
 import Container from "../layout/Container.astro";
+import { getBaseUrl } from "../../lib/utils";
 
 interface Props {
   magazine?: {
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const { magazine } = Astro.props;
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 ---
 
 <section class="relative py-12 lg:py-16 overflow-hidden">

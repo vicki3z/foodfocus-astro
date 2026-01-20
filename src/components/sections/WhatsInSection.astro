@@ -1,6 +1,7 @@
 ---
 import Container from "../layout/Container.astro";
 import ArticleCard from "../ui/ArticleCard.astro";
+import { getBaseUrl } from "../../lib/utils";
 
 interface Article {
   title: string;
@@ -19,7 +20,7 @@ interface Props {
 }
 
 const { articles, title = "What's In", seeAllHref = "/whats-in" } = Astro.props;
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 const [featured, ...rest] = articles;
 const sideArticles = rest.slice(0, 3);

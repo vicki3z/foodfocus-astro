@@ -1,5 +1,6 @@
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import { useState } from "react";
+import { getBaseUrl } from "../../lib/utils";
 
 interface NavItem {
   label: string;
@@ -65,7 +66,7 @@ const navItems: NavItem[] = [
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const baseUrl = import.meta.env.BASE_URL;
+  const baseUrl = getBaseUrl();
   
   // Helper to prepend baseUrl to internal paths
   const withBase = (path: string) => {

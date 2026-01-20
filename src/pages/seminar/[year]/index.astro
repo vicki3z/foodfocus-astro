@@ -8,9 +8,10 @@ import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_SEMINARS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
+import { getBaseUrl } from "../../../lib/utils";
 
 const pageTitle = "Seminar";
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {

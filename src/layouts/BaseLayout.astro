@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { getBaseUrl } from "../lib/utils";
 
 interface Props {
   title: string;
@@ -9,7 +10,7 @@ interface Props {
   publishedTime?: string;
 }
 
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 const {
   title,

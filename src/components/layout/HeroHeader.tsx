@@ -1,5 +1,6 @@
 import { Navigation } from "./Navigation";
 import { Tag } from "../ui/Tag";
+import { getBaseUrl } from "../../lib/utils";
 
 interface Magazine {
   title: string;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 export function HeroHeader({ magazine }: Props) {
-  const baseUrl = import.meta.env.BASE_URL;
+  const baseUrl = getBaseUrl();
   
   return (
     <header 

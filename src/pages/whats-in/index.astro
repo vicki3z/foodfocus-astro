@@ -7,10 +7,11 @@ import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import ArticleGrid from '../../components/sections/ArticleGrid.astro';
 import { fetchGraphQL } from '../../lib/graphql';
 import { GET_POSTS_BY_CATEGORY } from '../../lib/queries';
+import { getBaseUrl } from '../../lib/utils';
 
 const pageTitle = "What's In";
 const categorySlug = 'whats-in';
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch posts
 const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {

@@ -1,7 +1,8 @@
 import { Navigation } from "./Navigation";
+import { getBaseUrl } from "../../lib/utils";
 
 export function Header() {
-  const baseUrl = import.meta.env.BASE_URL;
+  const baseUrl = getBaseUrl();
   
   return (
     <header 

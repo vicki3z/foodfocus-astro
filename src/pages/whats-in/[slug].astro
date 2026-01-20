@@ -8,6 +8,7 @@ import ArticleContent from "../../components/sections/ArticleContent.astro";
 import OtherArticles from "../../components/sections/OtherArticles.astro";
 import { fetchGraphQL } from "../../lib/graphql";
 import { GET_POST_BY_SLUG, GET_POSTS_BY_CATEGORY } from "../../lib/queries";
+import { getBaseUrl } from "../../lib/utils";
 
 export async function getStaticPaths() {
   const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
@@ -25,7 +26,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const categorySlug = "whats-in";
 const categoryLabel = "What's In";
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch the post
 const postData = await fetchGraphQL<any>(GET_POST_BY_SLUG, { slug }).catch(

@@ -14,9 +14,10 @@ import {
   GET_EXHIBITIONS,
   GET_EVENT_YEARS,
 } from "../../lib/queries";
+import { getBaseUrl } from "../../lib/utils";
 
 const pageTitle = "Exhibition";
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch exhibition page content
 const pageData = await fetchGraphQL<any>(GET_EXHIBITION_PAGE, {

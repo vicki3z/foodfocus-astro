@@ -1,4 +1,6 @@
 ---
+import { getBaseUrl } from "../../lib/utils";
+
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -10,7 +12,7 @@ interface Props {
 }
 
 const { items, class: className = "" } = Astro.props;
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Helper to prepend baseUrl to internal paths
 const withBase = (path: string) => {

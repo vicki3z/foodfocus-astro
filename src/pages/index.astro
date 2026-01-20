@@ -16,8 +16,9 @@ import {
   GET_PROSERIES,
 } from "../lib/queries";
 import type { Magazine } from "../types/generated/graphql";
+import { getBaseUrl } from "../lib/utils";
 
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch all homepage data at build time
 const [

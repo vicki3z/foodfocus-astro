@@ -7,9 +7,10 @@ import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import { MagazinesTabs } from "../../components/sections/MagazinesTabs";
 import { fetchGraphQL } from "../../lib/graphql";
 import { GET_ALL_MAGAZINES, GET_PAGE_BY_SLUG } from "../../lib/queries";
+import { getBaseUrl } from "../../lib/utils";
 
 const pageTitle = "Magazines";
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {

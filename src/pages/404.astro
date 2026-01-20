@@ -4,8 +4,9 @@ import { Header } from '../components/layout/Header';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/layout/Container.astro';
 import { Button } from '../components/ui/Button';
+import { getBaseUrl } from '../lib/utils';
 
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = getBaseUrl();
 ---
 
 <BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
