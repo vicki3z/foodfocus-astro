@@ -20,7 +20,7 @@ const pageContent = pageData?.page?.content || "";
 
 // Fetch all magazines
 const data = await fetchGraphQL<any>(GET_ALL_MAGAZINES, {
-  first: 100,
+  first: 1000,
 }).catch(() => null);
 
 const magazines = (data?.magazines?.nodes || []).map((magazine: any) => ({
