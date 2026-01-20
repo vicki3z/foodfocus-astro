@@ -1,0 +1,98 @@
+---
+import Breadcrumb from "../ui/Breadcrumb.astro";
+import { Tag } from "../ui/Tag";
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  title: string;
+  titleTh?: string;
+  featuredImage?: string;
+  featuredImageAlt?: string;
+  date?: string;
+  breadcrumbs: BreadcrumbItem[];
+  category?: string;
+}
+
+const { title, titleTh, date, breadcrumbs, category } = Astro.props;
+
+const formattedDate = date
+  ? new Date(date).toLocaleDateString("th-TH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
+---
+
+<header class="mb-8">
+  <!-- Breadcrumb -->
+  <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+  <div class="flex flex-col gap-4">
+    {
+      category && (
+        <div>
+          <Tag variant="primary" size="sm">
+            {category}
+          </Tag>
+        </div>
+      )
+    }
+
+    <!-- Title -->
+    <h1
+      class="text-3xl lg:text-4xl font-semibold text-[var(--color-text-dark)] mb-2"
+    >
+      {title}
+    </h1>
+
+    {
+      titleTh && (
+        <p class="text-xl text-[var(--color-text-muted)] mb-4">{titleTh}</p>
+      )
+    }
+
+    <!-- Meta -->
+    <div class="flex gap-6">
+      {
+        formattedDate && (
+          <div class="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="size-4"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <time datetime={date}>{formattedDate}</time>
+          </div>
+        )
+      }
+
+      <div class="flex items-center gap-2 text-sm">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="size-4"
+        >
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
+          <path
+            fill-rule="evenodd"
+            d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z"
+            clip-rule="evenodd"></path>
+        </svg>
+        100 Views
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import ArticleHeader from "../../components/sections/ArticleHeader.astro";
+import ArticleContent from "../../components/sections/ArticleContent.astro";
+import OtherArticles from "../../components/sections/OtherArticles.astro";
+import { fetchGraphQL } from "../../lib/graphql";
+import { GET_PROSERIES_BY_SLUG, GET_ALL_PROSERIES } from "../../lib/queries";
+
+export async function getStaticPaths() {
+  const data = await fetchGraphQL<any>(GET_ALL_PROSERIES, { first: 100 }).catch(
+    () => null,
+  );
+
+  const items = data?.proseries?.nodes || [];
+
+  return items.map((item: any) => ({
+    params: { slug: item.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const cptSlug = "proseries";
+const cptLabel = "Proseries";
+
+// Fetch the item
+const itemData = await fetchGraphQL<any>(GET_PROSERIES_BY_SLUG, { slug }).catch(
+  () => null,
+);
+const item = itemData?.proserie;
+
+if (!item) {
+  return Astro.redirect("/404");
+}
+
+// Fetch other items for sidebar
+const otherData = await fetchGraphQL<any>(GET_ALL_PROSERIES, { first: 10 }).catch(
+  () => null,
+);
+
+const allItems = otherData?.proseries?.nodes || [];
+const otherItems = allItems
+  .filter((i: any) => i.slug !== slug)
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 3);
+
+const otherArticles = otherItems.map((i: any) => ({
+  title: i.title,
+  image: i.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: i.featuredImage?.node?.altText || "",
+  href: `/${cptSlug}/${i.slug}`,
+}));
+
+const breadcrumbs = [
+  { label: cptLabel, href: `/${cptSlug}` },
+  { label: item.title },
+];
+---
+
+<BaseLayout
+  title={item.title}
+  description={item.postSummary?.summary?.slice(0, 160) || ""}
+  image={item.featuredImage?.node?.sourceUrl}
+  type="article"
+>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-2">
+        <ArticleHeader
+          title={item.title}
+          featuredImage={item.featuredImage?.node?.sourceUrl}
+          featuredImageAlt={item.featuredImage?.node?.altText}
+          breadcrumbs={breadcrumbs}
+          category={cptLabel}
+        />
+
+        <ArticleContent content={item.content} />
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        {
+          otherArticles.length > 0 && (
+            <OtherArticles articles={otherArticles} title="Other Events" />
+          )
+        }
+      </aside>
+    </div>
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+
+const pageTitle = "Contact Us";
+
+const breadcrumbs = [{ label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">
+        Contact Us
+      </h1>
+      <div class="flex gap-16 mb-16 justify-center">
+        <img class="w-full max-w-[555px]" src="https://www.foodfocusthailand.com/images/upload/maps.jpg" alt="Be Media Focus (Thailand) Co., Ltd. Map" />
+        <iframe width="555" height="438" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC0mPfoxxoOS47lyK2KlWQNiMFTKV-CPeA&amp;q=บริษัท+บี+มีเดีย+โฟกัส+(ประเทศไทย)+จำกัด" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="px-10 flex gap-10 justify-between">
+        <div class="flex flex-col gap-6 items-center">
+          <img src="https://www.foodfocusthailand.com/images/icons/ic-location.png" alt="Map icon" class="max-w-[64px]" />
+          <div class="flex flex-col gap-4 text-center">
+            <p>Be Media Focus (Thailand) Co., Ltd.</p>
+            <p>5/38 Soi Ngamwongwan 25 Yak 26,</p>
+            <p>Bangkhen, Muang Nonthaburi,</p>
+            <p>Nonthaburi 11000 Thailand</p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-6 items-center">
+          <img src="https://www.foodfocusthailand.com/images/icons/ic-phone.png" alt="Phone icon" class="max-w-[64px]" />
+          <div class="flex flex-col gap-4 text-center">
+            <p><a href="tel:+6621929598">+66 2192 9598</a></p>
+            <p><a href="tel:+6621165732">+66 2116 5732</a></p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-6 items-center">
+          <img src="https://www.foodfocusthailand.com/images/icons/ic-email.png" alt="Email icon" class="max-w-[64px]" />
+          <div class="flex flex-col gap-4 text-center">
+            <div>
+              <p class="font-semibold">Advertising Enquiries</p>
+              <p><a href="mailto:sales@foodfocusthailand.com">sales@foodfocusthailand.com</a></p>
+            </div>
+            <div>
+              <p class="font-semibold">Editorial Enquiries</p>
+              <p><a href="mailto:editor@foodfocusthailand.com">editor@foodfocusthailand.com</a></p>
+            </div>
+            <div>
+              <p class="font-semibold">Seminar Enquiries</p>
+              <p><a href="mailto:seminar@foodfocusthailand.com">seminar@foodfocusthailand.com</a></p>
+            </div>
+            <div>
+              <p class="font-semibold">Subscription Enquiries</p>
+              <p><a href="mailto:contact@foodfocusthailand.com">contact@foodfocusthailand.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Header } from "../../../components/layout/Header";
+import Footer from "../../../components/layout/Footer.astro";
+import Container from "../../../components/layout/Container.astro";
+import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
+
+const pageTitle = "Endorsement";
+
+const breadcrumbs = [{ label: "About Us" }, { label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">
+        Endorsement
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center">
+        <a href="https://www.fda.moph.go.th" title="สำนักงานคณะกรรมการอาหารและยา กระทรวงสาธารณสุข" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/1_fd.jpg" alt="สำนักงานคณะกรรมการอาหารและยา กระทรวงสาธารณสุข" />
+        </a>
+        <a href="https://ftiweb.off.fti.or.th/industrialgroup/food" title="กลุ่มอุตสาหกรรมอาหาร สภาอุตสาหกรรมแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/2_foodprocess.jpg" alt="กลุ่มอุตสาหกรรมอาหาร สภาอุตสาหกรรมแห่งประเทศไทย" />
+        </a>
+        <a href="https://www.tistr.or.th/tistr/" title="สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยีแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/3_TISTR.jpg" alt="สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยีแห่งประเทศไทย" />
+        </a>
+        <a href="https://www.tistr.or.th/tpc/" title="ศูนย์การบรรจุหีบห่อไทย สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยีแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/4_thaipackage.jpg" alt="ศูนย์การบรรจุหีบห่อไทย สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยีแห่งประเทศไทย" />
+        </a>
+        <a href="https://www.fostat.org/" title="สมาคมวิทยาศาสตร์และเทคโนโลยีทางอาหารแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/5_Fostat.jpg" alt="สมาคมวิทยาศาสตร์และเทคโนโลยีทางอาหารแห่งประเทศไทย" />
+        </a>
+        <a href="https://www.halalscience.org/" title="ศูนย์วิทยาศาสตร์ฮาลาล จุฬาลงกรณ์มหาวิทยาลัย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/6_Halal.jpg" alt="ศูนย์วิทยาศาสตร์ฮาลาล จุฬาลงกรณ์มหาวิทยาลัย" />
+        </a>
+        <a href="https://www.ifrpd.ku.ac.th/" title="สถาบันค้นคว้าและพัฒนาผลิตภัณฑ์อาหาร มหาวิทยาลัยเกษตรศาสตร์" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/7_FoodResarchKaset.jpg" alt="สถาบันค้นคว้าและพัฒนาผลิตภัณฑ์อาหาร มหาวิทยาลัยเกษตรศาสตร์" />
+        </a>
+        <a href="https://www.agro.ku.ac.th/" title="คณะอุตสาหกรรมเกษตร มหาวิทยาลัยเกษตรศาสตร์" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/8_FacultyofAgro-Industry.jpg" alt="คณะอุตสาหกรรมเกษตร มหาวิทยาลัยเกษตรศาสตร์" />
+        </a>
+        <a href="https://www.nfi.or.th/" title="สถาบันอาหาร กระทรวงอุตสาหกรรม" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/9_nfi.jpg" alt="สถาบันอาหาร กระทรวงอุตสาหกรรม" />
+        </a>
+        <a href="https://www.ftpi.or.th/" title="สถาบันเพิ่มผลผลิตแห่งชาติ กระทรวงอุตสาหกรรม" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/10_thailandproductivity.jpg" alt="สถาบันเพิ่มผลผลิตแห่งชาติ กระทรวงอุตสาหกรรม" />
+        </a>
+        <a href="https://www.sme.go.th/" title="สำนักงานส่งเสริมวิสาหกิจขนาดกลางและขนาดย่อม" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/11_OSMEP.jpg" alt="สำนักงานส่งเสริมวิสาหกิจขนาดกลางและขนาดย่อม" />
+        </a>
+        <a href="https://www.thai-frozen.or.th/" title="สมาคมอาหารแช่เยือกแข็งไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/12_thaifrozen.jpg" alt="สมาคมอาหารแช่เยือกแข็งไทย" />
+        </a>
+        <a href="https://www.gs1thailand.org/" title="สถาบันรหัสสากล สภาอุตสาหกรรมแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/13_GS1.jpg" alt="สถาบันรหัสสากล สภาอุตสาหกรรมแห่งประเทศไทย" />
+        </a>
+        <a href="https://www.rfid.or.th/" title="สถาบันส่งเสริมความเป็นเลิศทางเทคโนโลยีอาร์เอฟไอดีแห่งประเทศไทย" target="_blank">
+          <img src="https://www.foodfocusthailand.com/images/upload/14_RFID.jpg" alt="สถาบันส่งเสริมความเป็นเลิศทางเทคโนโลยีอาร์เอฟไอดีแห่งประเทศไทย" />
+        </a>
+      </div>
+    </div>
+  </Container>
+  <Footer slot="footer" />
+</BaseLayout>

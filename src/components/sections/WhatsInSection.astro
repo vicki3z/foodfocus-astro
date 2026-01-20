@@ -1,0 +1,92 @@
+---
+import Container from "../layout/Container.astro";
+import ArticleCard from "../ui/ArticleCard.astro";
+
+interface Article {
+  title: string;
+  excerpt?: string;
+  date?: string;
+  slug: string;
+  image: string;
+  imageAlt?: string;
+  category?: string;
+}
+
+interface Props {
+  articles: Article[];
+  title?: string;
+  seeAllHref?: string;
+}
+
+const { articles, title = "What's In", seeAllHref = "/whats-in" } = Astro.props;
+
+const [featured, ...rest] = articles;
+const sideArticles = rest.slice(0, 3);
+---
+
+<section class="py-12 bg-[var(--color-bg-light)]">
+  <Container>
+    <!-- Section Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h2
+        class="text-2xl uppercase font-semibold text-[var(--color-text-dark)]"
+      >
+        {title}
+      </h2>
+      <a
+        href={seeAllHref}
+        class="text-sm font-medium text-[var(--color-primary)] hover:underline flex items-center gap-1"
+      >
+        See all
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Featured Article (Large) -->
+      {
+        featured && (
+          <ArticleCard
+            image={featured.image}
+            imageAlt={featured.imageAlt}
+            category={featured.category || "What's In"}
+            title={featured.title}
+            excerpt={featured.excerpt}
+            href={`/whats-in/${featured.slug}`}
+            variant="vertical"
+            class="lg:flex-1"
+          />
+        )
+      }
+
+      <!-- Side Articles (Horizontal) -->
+      <div class="flex flex-col gap-4 lg:w-1/2">
+        {
+          sideArticles.map((article) => (
+            <ArticleCard
+              image={article.image}
+              imageAlt={article.imageAlt}
+              category={article.category || "What's In"}
+              title={article.title}
+              excerpt={article.excerpt}
+              href={`/whats-in/${article.slug}`}
+              variant="horizontal"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>

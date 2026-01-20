@@ -1,0 +1,65 @@
+---
+interface Props {
+  content: string;
+  class?: string;
+}
+
+const { content, class: className = "" } = Astro.props;
+---
+
+<article
+  class:list={[
+    "prose prose-lg max-w-none",
+    "prose-headings:text-[var(--color-text-dark)]",
+    "prose-p:text-[var(--color-text-dark)]",
+    "prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline",
+    "prose-img:rounded-lg",
+    "prose-strong:text-[var(--color-text-dark)]",
+    "tracking-wider",
+    "leading-6",
+    "flex",
+    "flex-col",
+    "gap-5",
+    className,
+  ]}
+  set:html={content}
+/>
+
+<style is:global>
+  .prose img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .prose iframe {
+    max-width: 100%;
+    border-radius: 0.5rem;
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .prose th,
+  .prose td {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .prose th {
+    background-color: var(--color-bg-light);
+    font-weight: 600;
+  }
+
+  .prose figure {
+    margin: 1.5rem 0;
+  }
+
+  .prose figcaption {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+  }
+</style>

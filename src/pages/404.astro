@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Header } from '../components/layout/Header';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/layout/Container.astro';
+import { Button } from '../components/ui/Button';
+---
+
+<BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
+  <Header client:load slot="header" />
+
+  <Container class="py-16">
+    <div class="text-center max-w-lg mx-auto">
+      <h1 class="text-6xl font-bold text-[var(--color-primary)] mb-4">404</h1>
+      <h2 class="text-2xl font-semibold text-[var(--color-text-dark)] mb-4">
+        Page Not Found
+      </h2>
+      <p class="text-[var(--color-text-muted)] mb-8">
+        Sorry, the page you're looking for doesn't exist or has been moved.
+      </p>
+      <Button asChild>
+        <a href="/">Back to Homepage</a>
+      </Button>
+    </div>
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>

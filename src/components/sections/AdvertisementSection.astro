@@ -1,0 +1,54 @@
+---
+import Container from "../layout/Container.astro";
+
+interface Advertisement {
+  title: string;
+  image: string;
+  imageAlt?: string;
+  link?: string;
+}
+
+interface Props {
+  advertisements: Advertisement[];
+}
+
+const { advertisements } = Astro.props;
+---
+
+<section class="py-8 bg-white">
+  <Container>
+    <p class="text-center text-sm text-[var(--color-text-muted)] mb-4">
+      - Advertisement -
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mt-4">
+      {
+        advertisements.slice(0, 3).map((ad) =>
+          ad.link ? (
+            <a
+              href={ad.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block overflow-hidden hover:opacity-90 transition-opacity"
+            >
+              <img
+                src={ad.image}
+                alt={ad.imageAlt || ad.title}
+                class="w-87.5 h-auto"
+                loading="lazy"
+              />
+            </a>
+          ) : (
+            <div class="overflow-hidden">
+              <img
+                src={ad.image}
+                alt={ad.imageAlt || ad.title}
+                class="w-87.5 h-auto"
+                loading="lazy"
+              />
+            </div>
+          ),
+        )
+      }
+    </div>
+  </Container>
+</section>

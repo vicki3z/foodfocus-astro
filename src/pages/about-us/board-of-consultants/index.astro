@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Header } from "../../../components/layout/Header";
+import Footer from "../../../components/layout/Footer.astro";
+import Container from "../../../components/layout/Container.astro";
+import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
+
+const pageTitle = "Board of Consultants";
+
+const breadcrumbs = [{ label: "About Us" }, { label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">
+        Board of Consultants
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/1_Sakchai.jpg" alt="Sakchai Sriboonsue D.V.M., LB" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Sakchai Sriboonsue D.V.M., LB</p>
+            <p class="text-sm text-[var(--color-text-muted)]">President of the Milk Board</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Dairy Farming Promotion Organization of Thailand</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/2_Visit.jpg" alt="Visit Limprana" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Visit Limprana</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Honorary Advisor</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Food Processing Industry Club</p>
+            <p class="text-sm text-[var(--color-text-muted)]">The Federation of Thai Industries</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/3_Visit.jpg" alt="Visit Limlurcha" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Visit Limlurcha</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Chaiman</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Food Processing Industry Club</p>
+            <p class="text-sm text-[var(--color-text-muted)]">The Federation of Thai Industries</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/4_Sakkhee.jpg" alt="Sakkhee Sansupa" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Sakkhee Sansupa</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Director</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Thai Packaging Centre</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Thailand Institute of Scientific and Technological Research</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/5_Pavinee.jpg" alt="Assistant Professor Anadi Nitithamyong, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Assistant Professor Anadi Nitithamyong, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">President</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Food Science and Technology Association of Thailand (FoSTAT)</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/6_Winai.jpg" alt="Assoc. Prof.Winai Dahlan, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Assoc. Prof.Winai Dahlan, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Founding Director</p>
+            <p class="text-sm text-[var(--color-text-muted)]">The Halal Science Center</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Chulalongkorn University</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/7_Sombat.jpg" alt="Assoc. Prof.Sombat Chinawong, Ph.D" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Assoc. Prof.Sombat Chinawong, Ph.D</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Director</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Institute of Food Research and Product Development</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Kasetsart University</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/8_Yongvut.jpg" alt="Yongvut Saovapruk" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Yongvut Saovapruk</p>
+            <p class="text-sm text-[var(--color-text-muted)]">President</p>
+            <p class="text-sm text-[var(--color-text-muted)]">National Food Institute</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Ministry of Industry</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/9_Phanit.jpg" alt="Phanit Laosirirat, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Phanit Laosirirat, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Executive Director</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Thailand Productivity Institute</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Ministry of Industry</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/10_Ratchanee.jpg" alt="Assoc. Prof.Ratchanee Kongkachuichai, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Assoc. Prof.Ratchanee Kongkachuichai, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Director</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Institute of Nutrition</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Mahidol University</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/11_Visith.jpg" alt="Prof.Visith Chavasit, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Prof.Visith Chavasit, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Institute of Nutritio</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Mahidol University</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/12_Sittiwat.jpg" alt="Assoc. Prof.Sittiwat Lertsiri, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Assoc. Prof.Sittiwat Lertsiri, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Dean</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Faculty of Science</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Mahidol University</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/13_Poj.jpg" alt="Poj Aramwattananont, Ph.D." />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Poj Aramwattananont, Ph.D.</p>
+            <p class="text-sm text-[var(--color-text-muted)]">President</p>
+            <p class="text-sm text-[var(--color-text-muted)]">Thai Frozen Foods Association</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <img src="https://www.foodfocusthailand.com/images/upload/14_Pravith.jpg" alt="Pravith Chotiprayanakul" />
+          <div>
+            <p class="text-sm text-[var(--color-text-muted)]">Pravith Chotiprayanakul</p>
+            <p class="text-sm text-[var(--color-text-muted)]">CEO</p>
+            <p class="text-sm text-[var(--color-text-muted)]">GS1 Thailand</p>
+            <p class="text-sm text-[var(--color-text-muted)]">The Federation of Thai Industries</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+  <Footer slot="footer" />
+</BaseLayout>

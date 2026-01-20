@@ -1,0 +1,109 @@
+---
+import Container from "../layout/Container.astro";
+
+interface Props {
+  magazine?: {
+    title: string;
+    date: string;
+    image: string;
+    imageAlt?: string;
+    link: string;
+    magazineNo: string;
+  };
+}
+
+const { magazine } = Astro.props;
+---
+
+<section class="relative py-12 lg:py-16 overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-20">
+    <img
+      src="/images/header-bg.svg"
+      alt=""
+      class="w-full h-full object-cover"
+      aria-hidden="true"
+    />
+  </div>
+
+  <Container class="relative z-10">
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <!-- Left: Magazine Cover -->
+      <div class="flex justify-center lg:justify-start">
+        {
+          magazine ? (
+            <a
+              href={magazine.link}
+              class="group relative block max-w-xs shadow-2xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300"
+            >
+              <img
+                src={magazine.image}
+                alt={magazine.imageAlt || magazine.title}
+                class="w-full h-auto"
+              />
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                <p class="text-white text-sm font-medium">
+                  {new Date(magazine.date).toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+            </a>
+          ) : (
+            <div class="w-full max-w-xs aspect-[3/4] bg-white/10 rounded-lg animate-pulse" />
+          )
+        }
+      </div>
+
+      <!-- Right: Content -->
+      <div class="text-white text-center lg:text-left">
+        <h1 class="text-3xl lg:text-4xl font-bold mb-4">
+          Food Focus Thailand Magazine
+        </h1>
+        <p class="text-lg text-white/90 mb-8 max-w-lg mx-auto lg:mx-0">
+          The first industry-focused magazine for food & beverage professionals
+        </p>
+
+        <!-- Email Subscription Form -->
+        <form
+          action="https://www.foodfocusthailand.com/email.php"
+          method="POST"
+          class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0 mb-8"
+        >
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            class="flex-1 px-4 py-3 rounded-lg text-[#2d3319] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+          />
+          <button
+            type="submit"
+            class="px-6 py-3 bg-[#5bb4ae] hover:bg-[#4a9d97] text-white font-semibold rounded-lg transition-colors"
+          >
+            Subscribe
+          </button>
+        </form>
+
+        <!-- Logos -->
+        <div
+          class="flex flex-wrap items-center justify-center lg:justify-start gap-6"
+        >
+          <img
+            src="/images/FFT-logo.png"
+            alt="Food Focus Thailand"
+            class="h-10 opacity-90"
+            loading="lazy"
+          />
+          <img
+            src="/images/be-media-logo.png"
+            alt="BE Media"
+            class="h-8 opacity-90"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>

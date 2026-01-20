@@ -1,0 +1,211 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { HeroHeader } from "../components/layout/HeroHeader";
+import Footer from "../components/layout/Footer.astro";
+import { BannerCarousel } from "../components/sections/BannerCarousel";
+import WhatsInSection from "../components/sections/WhatsInSection.astro";
+import AdvertisementSection from "../components/sections/AdvertisementSection.astro";
+import NewsSection from "../components/sections/NewsSection.astro";
+import Container from "../components/layout/Container.astro";
+import { fetchGraphQL } from "../lib/graphql";
+import {
+  GET_LATEST_MAGAZINE,
+  GET_BANNERS,
+  GET_POSTS_BY_CATEGORY,
+  GET_ROADMAPS,
+  GET_PROSERIES,
+} from "../lib/queries";
+import type { Magazine } from "../types/generated/graphql";
+
+// Fetch all homepage data at build time
+const [
+  magazineData,
+  bannersData,
+  whatsInData,
+  newsData,
+  advertisementData,
+  roadmapsData,
+  proseriesData,
+] = await Promise.all([
+  fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
+  fetchGraphQL<any>(GET_BANNERS).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 4,
+    category: "whats-in",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 6,
+    category: "news",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 3,
+    category: "advertisement",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_ROADMAPS, { first: 3 }).catch(() => null),
+  fetchGraphQL<any>(GET_PROSERIES, { first: 3 }).catch(() => null),
+]);
+
+// Process magazine data
+const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
+  ? ({
+      title: magazineData.magazineType.magazines.nodes[0].title,
+      date: magazineData.magazineType.magazines.nodes[0].date,
+      image:
+        magazineData.magazineType.magazines.nodes[0].magazines?.image?.node?.sourceUrl || "",
+      imageAlt:
+        magazineData.magazineType.magazines.nodes[0].magazines?.image?.node?.altText || "",
+      link: magazineData.magazineType.magazines.nodes[0].magazines?.link || "",
+      magazineNo: magazineData.magazineType.magazines.nodes[0].magazines?.magazineNo || "",
+    } as unknown as Magazine)
+  : undefined;
+
+// Process banners - filter by prefix
+const allBanners = bannersData?.banners?.nodes || [];
+console.log("allBanners", allBanners.length);
+console.log(
+  "topBanners",
+  allBanners.filter(
+    (b: any) =>
+      b.title?.startsWith("T_") && b.bannerFields?.image?.node?.sourceUrl,
+  ),
+);
+const topBanners = allBanners
+  .filter((b: any) => b.title?.startsWith("T_"))
+  .map((b: any) => ({
+    title: b.title,
+    image: b.bannerFields?.image?.node?.sourceUrl || "",
+    imageAlt: b.bannerFields?.image?.node?.altText || "",
+    link: b.bannerFields?.link || "",
+  }))
+  .slice(0, 6);
+
+const bottomBanners = allBanners
+  .filter((b: any) => b.title?.startsWith("B_"))
+  .map((b: any) => ({
+    title: b.title,
+    image: b.bannerFields?.image?.node?.sourceUrl || "",
+    imageAlt: b.bannerFields?.image?.node?.altText || "",
+    link: b.bannerFields?.link || "",
+  }))
+  .slice(0, 6);
+
+// Process What's In articles
+const whatsInArticles = (whatsInData?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes?.[0]?.name || "What's In",
+}));
+
+// Process News articles
+const newsArticles = (newsData?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes?.[0]?.name || "News",
+}));
+
+// Process Advertisements
+const advertisements = (advertisementData?.posts?.nodes || []).map(
+  (post: any) => ({
+    title: post.title,
+    image: post.featuredImage?.node?.sourceUrl || "",
+    imageAlt: post.featuredImage?.node?.altText || "",
+    link: post.link || "",
+  }),
+);
+
+// Process Roadmaps
+const roadmapItems = (roadmapsData?.roadmaps?.nodes || []).map((item: any) => ({
+  title: item.title,
+  summary: item.postSummary?.summary || "",
+  slug: item.slug,
+  image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: item.featuredImage?.node?.altText || "",
+  link: item.link,
+}));
+
+// Process Proseries
+const proseriesItems = (proseriesData?.proseries?.nodes || []).map(
+  (item: any) => ({
+    title: item.title,
+    summary: item.postSummary?.summary || "",
+    slug: item.slug,
+    image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+  }),
+);
+
+// Configurable sections
+const configurableSections = [
+  {
+    type: "roadmap",
+    label: "Roadmap",
+    href: "/roadmap",
+    items: roadmapItems,
+  },
+  {
+    type: "proseries",
+    label: "Proseries",
+    href: "/proseries",
+    items: proseriesItems,
+  },
+];
+---
+
+<BaseLayout title="Home">
+  <HeroHeader client:load slot="header" magazine={magazine} />
+
+  <!-- Top Banner Carousel -->
+  {
+    topBanners.length > 0 && (
+      <section class="bg-white">
+        <Container class="py-4">
+          <BannerCarousel banners={topBanners} client:visible />
+        </Container>
+      </section>
+    )
+  }
+
+  <!-- What's In Section -->
+  {whatsInArticles.length > 0 && <WhatsInSection articles={whatsInArticles} />}
+
+  <!-- Advertisement Section -->
+  {
+    advertisements.length > 0 && (
+      <AdvertisementSection advertisements={advertisements} />
+    )
+  }
+
+  <!-- News Section with Configurable Sidebar -->
+  {
+    newsArticles.length > 0 && (
+      <NewsSection
+        articles={newsArticles}
+        configurableSections={configurableSections.filter(
+          (s) => s.items.length > 0,
+        )}
+      />
+    )
+  }
+
+  <!-- Bottom Banner Carousel -->
+  {
+    bottomBanners.length > 0 && (
+      <section class="bg-white">
+        <Container class="py-8">
+          <BannerCarousel banners={bottomBanners} client:visible />
+        </Container>
+      </section>
+    )
+  }
+
+  <Footer slot="footer" />
+</BaseLayout>

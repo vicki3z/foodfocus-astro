@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Header } from "../../../components/layout/Header";
+import Footer from "../../../components/layout/Footer.astro";
+import Container from "../../../components/layout/Container.astro";
+import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
+
+const pageTitle = "Advertisers";
+
+const breadcrumbs = [{ label: "About Us" }, { label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">
+        Advertisers
+      </h1>
+      <img src="../images/thank_U_2018.jpg" alt="A heartfelt thank you to our sponsors" />
+    </div>
+  </Container>
+  <Footer slot="footer" />
+</BaseLayout>

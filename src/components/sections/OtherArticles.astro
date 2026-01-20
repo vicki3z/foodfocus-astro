@@ -1,0 +1,47 @@
+---
+import ArticleCard from "../ui/ArticleCard.astro";
+
+interface Article {
+  title: string;
+  image: string;
+  imageAlt?: string;
+  href: string;
+  category: string;
+  excerpt: string;
+}
+
+interface Props {
+  articles: Article[];
+  title?: string;
+  class?: string;
+}
+
+const {
+  articles,
+  title = "Other Articles",
+  class: className = "",
+} = Astro.props;
+---
+
+<aside class:list={["bg-[var(--color-bg-light)] rounded-lg p-6", className]}>
+  <h3 class="text-lg font-bold text-[var(--color-text-dark)] mb-4">
+    {title}
+  </h3>
+
+  <div class="space-y-4">
+    {
+      articles
+        .slice(0, 3)
+        .map((article) => (
+          <ArticleCard
+            image={article.image}
+            imageAlt={article.imageAlt}
+            title={article.title}
+            href={article.href}
+            category={article.category}
+            variant="vertical"
+          />
+        ))
+    }
+  </div>
+</aside>

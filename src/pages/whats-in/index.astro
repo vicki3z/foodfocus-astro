@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Header } from '../../components/layout/Header';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/layout/Container.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import ArticleGrid from '../../components/sections/ArticleGrid.astro';
+import { fetchGraphQL } from '../../lib/graphql';
+import { GET_POSTS_BY_CATEGORY } from '../../lib/queries';
+
+const pageTitle = "What's In";
+const categorySlug = 'whats-in';
+
+// Fetch posts
+const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+  first: 12,
+  category: categorySlug,
+}).catch(() => null);
+
+const articles = (data?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl || '/images/placeholder.jpg',
+  imageAlt: post.featuredImage?.node?.altText || '',
+  category: post.categories?.nodes?.[0]?.name || pageTitle,
+}));
+
+const breadcrumbs = [{ label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Title -->
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-8">
+      {pageTitle}
+    </h1>
+
+    <!-- Articles Grid -->
+    {articles.length > 0 ? (
+      <ArticleGrid articles={articles} baseHref="/whats-in" columns={3} />
+    ) : (
+      <p class="text-center text-[var(--color-text-muted)] py-12">
+        No articles found.
+      </p>
+    )}
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+import ArticleCard from "../ui/ArticleCard.astro";
+
+interface Article {
+  title: string;
+  excerpt?: string;
+  date?: string;
+  slug: string;
+  image: string;
+  imageAlt?: string;
+  category?: string;
+}
+
+interface Props {
+  articles: Article[];
+  baseHref: string;
+  columns?: 2 | 3;
+  class?: string;
+}
+
+const { articles, baseHref, columns = 3, class: className = "" } = Astro.props;
+
+const gridCols = {
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-2 lg:grid-cols-3",
+};
+---
+
+<div class:list={["grid gap-6", gridCols[columns], className]}>
+  {
+    articles.map((article) => (
+      <ArticleCard
+        image={article.image}
+        imageAlt={article.imageAlt}
+        category={article.category}
+        title={article.title}
+        excerpt={article.excerpt}
+        date={article.date}
+        href={`${baseHref}/${article.slug}`}
+        variant="vertical"
+      />
+    ))
+  }
+</div>

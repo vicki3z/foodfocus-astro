@@ -1,0 +1,66 @@
+---
+import Container from '../layout/Container.astro';
+import ArticleCard from '../ui/ArticleCard.astro';
+
+interface ContentItem {
+  title: string;
+  summary?: string;
+  slug: string;
+  image: string;
+  imageAlt?: string;
+  link?: string;
+}
+
+interface ContentSection {
+  type: string;
+  label: string;
+  href: string;
+  items: ContentItem[];
+}
+
+interface Props {
+  sections: ContentSection[];
+}
+
+const { sections } = Astro.props;
+---
+
+<section class="py-12 bg-[var(--color-bg-light)]">
+  <Container>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sections.map((section) => (
+        <div>
+          <!-- Section Header -->
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-dark)]">
+              {section.label}
+            </h3>
+            <a
+              href={section.href}
+              class="text-sm font-medium text-[var(--color-primary)] hover:underline flex items-center gap-1"
+            >
+              See all
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Items -->
+          <div class="space-y-4">
+            {section.items.slice(0, 3).map((item) => (
+              <ArticleCard
+                image={item.image}
+                imageAlt={item.imageAlt}
+                title={item.title}
+                excerpt={item.summary}
+                href={item.link || `/${section.type}/${item.slug}`}
+                variant="horizontal"
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>

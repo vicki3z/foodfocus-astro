@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import { MagazinesTabs } from "../../components/sections/MagazinesTabs";
+import { fetchGraphQL } from "../../lib/graphql";
+import { GET_ALL_MAGAZINES, GET_PAGE_BY_SLUG } from "../../lib/queries";
+
+const pageTitle = "Magazines";
+
+// Fetch page content
+const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
+  slug: "food-focus-thailand-magazine",
+}).catch(() => null);
+
+const pageContent = pageData?.page?.content || "";
+
+// Fetch all magazines
+const data = await fetchGraphQL<any>(GET_ALL_MAGAZINES, {
+  first: 100,
+}).catch(() => null);
+
+const magazines = (data?.magazines?.nodes || []).map((magazine: any) => ({
+  title: magazine.title,
+  date: magazine.date,
+  image:
+    magazine.magazines?.image?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: magazine.magazines?.image?.node?.altText || magazine.title || "",
+  link: magazine.magazines?.link || "",
+  magazineNo: magazine.magazines?.magazineNo || 0,
+  magazineType: magazine.magazineTypes?.nodes?.[0]?.slug || "",
+}));
+
+const breadcrumbs = [{ label: pageTitle }];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description="Browse all Food Focus Thailand Magazine issues and Special Supplements"
+>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-[var(--color-text-dark)] mb-4">
+        FOOD FOCUS THAILAND MAGAZINES
+      </h1>
+      {
+        pageContent && (
+          <div class="text-[var(--color-text-muted)]" set:html={pageContent} />
+        )
+      }
+    </div>
+
+    <!-- Magazines Tabs -->
+    {
+      magazines.length > 0 ? (
+        <MagazinesTabs client:load magazines={magazines} />
+      ) : (
+        <p class="text-center text-[var(--color-text-muted)] py-12">
+          No magazines found.
+        </p>
+      )
+    }
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>

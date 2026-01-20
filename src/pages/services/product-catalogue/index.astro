@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Header } from "../../../components/layout/Header";
+import Footer from "../../../components/layout/Footer.astro";
+import Container from "../../../components/layout/Container.astro";
+import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
+import ArticleCard from "../../../components/ui/ArticleCard.astro";
+
+const pageTitle = "Contact Publication";
+
+const breadcrumbs = [{ label: "Services" }, { label: pageTitle }];
+---
+
+<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">
+        Services
+      </h1>
+      <div class="mb-10">
+        <p>
+          With more than 10 years of experience, we can help you create a variety of promotional materials and concrete events to deliver your messages to the public.
+        </p>
+        <p>
+          จากความเชี่ยวชาญในด้านสื่อสิ่งพิมพ์มามากกว่า 10 ปี เราจึงสามารถให้บริการงานด้านสื่อสิ่งพิมพ์และกิจกรรมหลากหลายรูปแบบ เพื่อเผยแพร่และประชาสัมพันธ์สิ่งที่คุณต้องการสื่อสารความเป็นองค์กรของคุณออกไปในวงกว้าง
+        </p>
+      </div>
+      <h2 class="text-2xl text-transform-uppercase font-bold text-[var(--color-text-dark)] mb-4">Company Profile & Product Catalogue</h2>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/3M_Thailand.jpg"
+          title="3M Thailand"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/949_Supplies.jpg"
+          title="949 Supplies"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Advance_Pharma.jpg"
+          title="Advance Pharma"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Better_Pack.jpg"
+          title="Better Pack"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Diversey_Hygiene.jpg"
+          title="Diversey Hygiene (Thailand)"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Forefront_Foodtech.jpg"
+          title="Forefront Foodtech"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Harn_Engineering_Solutions.jpg"
+          title="Harn Engineering Solutions"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/Metrohm_Siam.jpg"
+          title="Metrohm Siam"
+          variant="vertical"
+        />
+        <ArticleCard
+          image="https://www.foodfocusthailand.com/images/upload/export_chicken.jpg"
+          title="สมาคมผู้ผลิตไก่เพื่อส่งออกไทย"
+          variant="vertical"
+        />
+      </div>
+    </div>
+  </Container>
+  <Footer slot="footer" />
+</BaseLayout>

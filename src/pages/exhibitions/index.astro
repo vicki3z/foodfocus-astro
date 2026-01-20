@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import ArticleGrid from "../../components/sections/ArticleGrid.astro";
+import { YearSelector } from "../../components/ui/YearSelector";
+import { MediaPartnerSlider } from "../../components/sections/MediaPartnerSlider";
+import { fetchGraphQL } from "../../lib/graphql";
+import {
+  GET_EXHIBITION_PAGE,
+  GET_MEDIA_PARTNERS,
+  GET_EXHIBITIONS,
+  GET_EVENT_YEARS,
+} from "../../lib/queries";
+
+const pageTitle = "Exhibition";
+
+// Fetch exhibition page content
+const pageData = await fetchGraphQL<any>(GET_EXHIBITION_PAGE, {
+  slug: "exhibition",
+}).catch(() => null);
+
+const pageContent = pageData?.page?.content || "";
+
+// Get year from URL query parameter
+const url = new URL(Astro.request.url);
+const selectedYear = url.searchParams.get("year");
+
+// Fetch available years from taxonomy
+const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+const availableYears = (yearsData?.eventYears?.nodes || [])
+  .map((node: any) => parseInt(node.name))
+  .sort((a: number, b: number) => b - a); // Sort descending
+
+// Default to the latest year if no year is selected
+const currentYear = selectedYear
+  ? parseInt(selectedYear)
+  : availableYears[0] || new Date().getFullYear();
+
+// Fetch media partners
+const partnersData = await fetchGraphQL<any>(GET_MEDIA_PARTNERS).catch(
+  () => null,
+);
+const mediaPartners = (partnersData?.mediaPartners?.nodes || []).map(
+  (partner: any) => ({
+    title: partner.title,
+    logo:
+      partner.bannerFields?.image?.node?.sourceUrl || "/images/placeholder.jpg",
+    logoAlt: partner.bannerFields?.image?.node?.altText || partner.title,
+    link: partner.bannerFields?.link || "",
+  }),
+);
+
+// Fetch exhibitions for the selected year using taxonomy
+// Note: Query returns empty for now until correct GraphQL field is configured
+const data = await fetchGraphQL<any>(GET_EXHIBITIONS, {
+  yearSlug: String(currentYear),
+}).catch(() => null);
+
+const exhibitions = (data?.eventYear?.events?.nodes || []).map((item: any) => ({
+  title: item.title,
+  excerpt: item.postSummary?.summary || "",
+  slug: item.slug,
+  image: item.featuredImage?.node?.sourceUrl || "/images/placeholder.jpg",
+  imageAlt: item.featuredImage?.node?.altText || "",
+  category: pageTitle,
+}));
+
+const breadcrumbs = [
+  { label: "Events", href: "/events" },
+  { label: pageTitle },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description="We Have Participated In The Notable Food & Beverage Related Exhibitions Both Domestic And Overseas To Promote Our Magazine And Other Activities."
+>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Title -->
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-4 uppercase">
+      {pageTitle}
+    </h1>
+
+    <!-- Page Content -->
+    {
+      pageContent ? (
+        <div
+          class="mb-8 text-[var(--color-text-muted)]"
+          set:html={pageContent}
+        />
+      ) : (
+        <div class="mb-8 text-[var(--color-text-dark)]">
+          <p class="mb-4">
+            We Have Participated In The Notable Food & Beverage Related
+            Exhibitions Both Domestic And Overseas To Promote Our Magazine And
+            Other Activities. That's Why We Possess The Strong And Powerful
+            Database.
+          </p>
+          <p class="text-[var(--color-text-muted)]">
+            องค์กรของเรามีส่วนร่วมในนิทรรศการและเหตุสินค้าที่เกี่ยวข้องกับท้องทิศตาสุดสหกรณ์อาหารและเครื่องดื่นทั้งในและต่างประเทศ
+            เพื่อเผยแพร่และประชาสัมพันธ์นิตยสารและกิจกรรมต่างๆ
+            ทำให้เรามีฐานข้อมูลสมาชิกที่แข็งแกร่งและอัพเดทอยู่เสมอ
+          </p>
+        </div>
+      )
+    }
+
+    <!-- Media Partners Section -->
+    {
+      mediaPartners.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-[var(--color-text-dark)] mb-6">
+            MEDIA PARTNERS
+          </h2>
+          <MediaPartnerSlider partners={mediaPartners} client:load />
+        </section>
+      )
+    }
+
+    <!-- Year Selector -->
+    {
+      availableYears.length > 0 && (
+        <YearSelector
+          years={availableYears.map(String)}
+          defaultYear={String(currentYear)}
+          baseHref="/exhibitions"
+          client:load
+        />
+      )
+    }
+
+    <!-- Exhibitions Grid -->
+    {
+      exhibitions.length > 0 ? (
+        <ArticleGrid articles={exhibitions} columns={3} />
+      ) : (
+        <p class="text-center text-[var(--color-text-muted)] py-12">
+          No exhibitions found for {currentYear}.
+        </p>
+      )
+    }
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>
