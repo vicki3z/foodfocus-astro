@@ -8,6 +8,8 @@ interface NavItem {
   children?: { label: string; href: string; description?: string }[];
 }
 
+const currentYear = new Date().getFullYear();
+
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   {
@@ -29,20 +31,20 @@ const navItems: NavItem[] = [
   {
     label: "Events",
     children: [
-      { label: "Roadmaps", href: "/roadmaps", description: "Industry roadmaps" },
+      { label: "Roadmaps", href: `/roadmaps/${currentYear}`, description: "Industry roadmaps" },
       {
         label: "Roadshows",
-        href: "/roadshows",
+        href: `/roadshows/${currentYear}`,
         description: "Upcoming roadshows",
       },
       {
         label: "Proseries",
-        href: "/proseries",
+        href: `/proseries/${currentYear}`,
         description: "Professional series events",
       },
       {
         label: "Exclusive Events",
-        href: "/seminars",
+        href: `/seminars/${currentYear}`,
         description: "Exclusive events",
       },
       {

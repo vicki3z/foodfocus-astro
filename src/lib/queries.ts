@@ -281,6 +281,12 @@ export const GET_ALL_PROSERIES = gql`
         postSummary {
           summary
         }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
       }
     }
   }
@@ -288,7 +294,7 @@ export const GET_ALL_PROSERIES = gql`
 
 // Get all Roadmaps (for getStaticPaths)
 export const GET_ALL_ROADMAPS = gql`
-  query GetAllRoadmaps($first: Int!, $after: String) {
+  query GetAllRoadmaps($first: Int, $after: String) {
     roadmaps(first: $first, after: $after) {
       pageInfo {
         hasNextPage
@@ -307,6 +313,12 @@ export const GET_ALL_ROADMAPS = gql`
         }
         postSummary {
           summary
+        }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
         }
       }
     }
@@ -335,6 +347,12 @@ export const GET_ALL_ROADSHOWS = gql`
         postSummary {
           summary
         }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
       }
     }
   }
@@ -362,6 +380,12 @@ export const GET_ALL_SEMINARS = gql`
         postSummary {
           summary
         }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
       }
     }
   }
@@ -383,6 +407,12 @@ export const GET_ROADMAP_BY_SLUG = gql`
       postSummary {
         summary
       }
+      eventYears {
+        nodes {
+          name
+          slug
+        }
+      }
     }
   }
 `;
@@ -402,6 +432,12 @@ export const GET_ROADSHOW_BY_SLUG = gql`
       }
       postSummary {
         summary
+      }
+      eventYears {
+        nodes {
+          name
+          slug
+        }
       }
     }
   }
@@ -423,6 +459,12 @@ export const GET_SEMINAR_BY_SLUG = gql`
       postSummary {
         summary
       }
+      eventYears {
+        nodes {
+          name
+          slug
+        }
+      }
     }
   }
 `;
@@ -442,6 +484,12 @@ export const GET_PROSERIES_BY_SLUG = gql`
       }
       postSummary {
         summary
+      }
+      eventYears {
+        nodes {
+          name
+          slug
+        }
       }
     }
   }

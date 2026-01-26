@@ -1,13 +1,13 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { Header } from "../../components/layout/Header";
-import Footer from "../../components/layout/Footer.astro";
-import Container from "../../components/layout/Container.astro";
-import ArticleHeader from "../../components/sections/ArticleHeader.astro";
-import ArticleContent from "../../components/sections/ArticleContent.astro";
-import OtherArticles from "../../components/sections/OtherArticles.astro";
-import { fetchGraphQL } from "../../lib/graphql";
-import { GET_SEMINAR_BY_SLUG, GET_ALL_SEMINARS } from "../../lib/queries";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Header } from "../../../components/layout/Header";
+import Footer from "../../../components/layout/Footer.astro";
+import Container from "../../../components/layout/Container.astro";
+import ArticleHeader from "../../../components/sections/ArticleHeader.astro";
+import ArticleContent from "../../../components/sections/ArticleContent.astro";
+import OtherArticles from "../../../components/sections/OtherArticles.astro";
+import { fetchGraphQL } from "../../../lib/graphql";
+import { GET_SEMINAR_BY_SLUG, GET_ALL_SEMINARS } from "../../../lib/queries";
 
 export async function getStaticPaths() {
   const data = await fetchGraphQL<any>(GET_ALL_SEMINARS, { first: 100 }).catch(
@@ -17,11 +17,11 @@ export async function getStaticPaths() {
   const items = data?.seminars?.nodes || [];
 
   return items.map((item: any) => ({
-    params: { slug: item.slug },
+    params: { slug: item.slug, year: item.eventYears.nodes[0].slug },
   }));
 }
 
-const { slug } = Astro.params;
+const { slug, year } = Astro.params;
 const cptSlug = "seminars";
 const cptLabel = "Seminars";
 
@@ -50,11 +50,12 @@ const otherArticles = otherItems.map((i: any) => ({
   title: i.title,
   image: i.featuredImage?.node?.sourceUrl,
   imageAlt: i.featuredImage?.node?.altText || "",
-  href: `${cptSlug}/${i.slug}`,
+  href: `${cptSlug}/${i.eventYears.nodes[0].slug}/${i.slug}`,
 }));
 
 const breadcrumbs = [
   { label: cptLabel, href: cptSlug },
+  { label: year, href: `${cptSlug}/${year}` },
   { label: item.title },
 ];
 ---

@@ -8,6 +8,7 @@ import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
+import type { EventListPageProps } from "../../../types/internals";
 
 const pageTitle = "Roadshows";
 const pageSlug = "roadshows";
@@ -32,7 +33,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const { year, availableYears } = Astro.props;
+const { year, availableYears } = Astro.props as EventListPageProps;
 const currentYear = year;
 
 // Fetch CPT items for the selected year using taxonomy
@@ -86,7 +87,7 @@ const breadcrumbs = [{ label: pageTitle, href: pageSlug }, { label: String(curre
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref={pageSlug} columns={3} />
+        <ArticleGrid articles={articles} baseHref={`${pageSlug}/${currentYear}`} columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found for {currentYear}.
