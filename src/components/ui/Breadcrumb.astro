@@ -18,7 +18,7 @@ const baseUrl = getBaseUrl();
 const withBase = (path: string) => {
   if (!path || path.startsWith("http")) return path;
   if (path === "/") return baseUrl;
-  return `${baseUrl}${path.slice(1)}`;
+  return `${baseUrl}${path}`;
 };
 ---
 
