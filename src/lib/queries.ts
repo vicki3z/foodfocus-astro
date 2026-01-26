@@ -86,6 +86,56 @@ export const GET_BANNERS = gql`
   }
 `;
 
+export const GET_TOP_BANNERS = gql`
+  query GetTopBanners {
+    positions(where: { name: "Top"}) {
+      nodes {
+        name
+        banners {
+          nodes {
+            title
+            bannerFields {
+              image {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              link
+            }
+
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_BOTTOM_BANNERS = gql`
+  query GetBottomBanners {
+    positions(where: { name: "Bottom"}) {
+      nodes {
+        name
+        banners {
+          nodes {
+            title
+            bannerFields {
+              image {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              link
+            }
+
+          }
+        }
+      }
+    }
+  }
+`;
+
 // Posts by Category Query
 export const GET_POSTS_BY_CATEGORY = gql`
   query GetPostsByCategory($first: Int!, $after: String, $category: String!) {

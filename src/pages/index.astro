@@ -10,7 +10,8 @@ import Container from "../components/layout/Container.astro";
 import { fetchGraphQL } from "../lib/graphql";
 import {
   GET_LATEST_MAGAZINE,
-  GET_BANNERS,
+  GET_TOP_BANNERS,
+  GET_BOTTOM_BANNERS,
   GET_POSTS_BY_CATEGORY,
   GET_HOMEPAGE_HIGHLIGHTS,
   GET_HOMEPAGE_ROADMAPS,
@@ -23,7 +24,8 @@ import type { Category, Magazine } from "../types/generated/graphql";
 // Fetch all homepage data at build time
 const [
   magazineData,
-  bannersData,
+  topBannersData,
+  bottomBannersData,
   whatsInData,
   newsData,
   advertisementData,
@@ -34,7 +36,8 @@ const [
   seminarsData,
 ] = await Promise.all([
   fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
-  fetchGraphQL<any>(GET_BANNERS).catch(() => null),
+  fetchGraphQL<any>(GET_TOP_BANNERS).catch(() => null),
+  fetchGraphQL<any>(GET_BOTTOM_BANNERS).catch(() => null),
   fetchGraphQL<{ categories: { nodes: Category[] } }>(GET_HOMEPAGE_HIGHLIGHTS).catch(() => null),
   fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
     first: 6,
@@ -70,28 +73,19 @@ const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
     } as unknown as Magazine)
   : undefined;
 
-// Process banners - filter by prefix
-const allBanners = bannersData?.banners?.nodes || [];
+const topBanners = (topBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
+  title: b.title,
+  image: b.bannerFields?.image?.node?.sourceUrl || "",
+  imageAlt: b.bannerFields?.image?.node?.altText || "",
+  link: b.bannerFields?.link || "",
+}))
 
-const topBanners = allBanners
-  .filter((b: any) => b.title?.startsWith("T_"))
-  .map((b: any) => ({
-    title: b.title,
-    image: b.bannerFields?.image?.node?.sourceUrl || "",
-    imageAlt: b.bannerFields?.image?.node?.altText || "",
-    link: b.bannerFields?.link || "",
-  }))
-  .slice(0, 6);
-
-const bottomBanners = allBanners
-  .filter((b: any) => b.title?.startsWith("B_"))
-  .map((b: any) => ({
-    title: b.title,
-    image: b.bannerFields?.image?.node?.sourceUrl || "",
-    imageAlt: b.bannerFields?.image?.node?.altText || "",
-    link: b.bannerFields?.link || "",
-  }))
-  .slice(0, 6);
+const bottomBanners = (bottomBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
+  title: b.title,
+  image: b.bannerFields?.image?.node?.sourceUrl || "",
+  imageAlt: b.bannerFields?.image?.node?.altText || "",
+  link: b.bannerFields?.link || "",
+}))
 
 // Process What's In articles
 const whatsInArticles = (whatsInData?.categories?.nodes[0]?.posts?.nodes || []).map((post: any) => ({
