@@ -1,0 +1,117 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseHref: string;
+}
+
+const { currentPage, totalPages, baseHref } = Astro.props;
+
+// Generate array of page numbers to display
+const getPageNumbers = () => {
+  const pages: (number | string)[] = [];
+  const maxVisible = 7; // Show up to 7 page numbers
+
+  if (totalPages <= maxVisible) {
+    // Show all pages if total is small
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Always show first page
+    pages.push(1);
+
+    if (currentPage > 3) {
+      pages.push("...");
+    }
+
+    // Show pages around current page
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (currentPage < totalPages - 2) {
+      pages.push("...");
+    }
+
+    // Always show last page
+    pages.push(totalPages);
+  }
+
+  return pages;
+};
+
+const pageNumbers = getPageNumbers();
+---
+
+<nav class="flex items-center justify-center gap-2 mt-8" aria-label="Pagination">
+  <!-- Previous Button -->
+  {
+    currentPage > 1 ? (
+      <a
+        href={`/${baseHref}/page/${currentPage - 1}`}
+        class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        aria-label="Previous page"
+      >
+        Previous
+      </a>
+    ) : (
+      <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
+        Previous
+      </span>
+    )
+  }
+
+  <!-- Page Numbers -->
+  <div class="hidden sm:flex items-center gap-1">
+    {
+      pageNumbers.map((page) =>
+        page === "..." ? (
+          <span class="px-3 py-2 text-sm text-[var(--color-text-muted)]">
+            ...
+          </span>
+        ) : page === currentPage ? (
+          <span
+            class="px-3 py-2 text-sm font-medium text-white bg-[var(--color-primary)] rounded-md"
+            aria-current="page"
+          >
+            {page}
+          </span>
+        ) : (
+          <a
+            href={`/${baseHref}/page/${page}`}
+            class="px-3 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+            aria-label={`Go to page ${page}`}
+          >
+            {page}
+          </a>
+        ),
+      )
+    }
+  </div>
+
+  <!-- Current Page Indicator (Mobile) -->
+  <span class="sm:hidden px-3 py-2 text-sm font-medium text-[var(--color-text-dark)]">
+    Page {currentPage} of {totalPages}
+  </span>
+
+  <!-- Next Button -->
+  {
+    currentPage < totalPages ? (
+      <a
+        href={`/${baseHref}/page/${currentPage + 1}`}
+        class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        aria-label="Next page"
+      >
+        Next
+      </a>
+    ) : (
+      <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
+        Next
+      </span>
+    )
+  }
+</nav>
