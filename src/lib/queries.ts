@@ -287,6 +287,9 @@ export const GET_ALL_PROSERIES = gql`
             slug
           }
         }
+        eventsMetadata {
+          homepage
+        }
       }
     }
   }
@@ -319,6 +322,9 @@ export const GET_ALL_ROADMAPS = gql`
             name
             slug
           }
+        }
+        eventsMetadata {
+          homepage
         }
       }
     }
@@ -353,6 +359,9 @@ export const GET_ALL_ROADSHOWS = gql`
             slug
           }
         }
+        eventsMetadata {
+          homepage
+        }
       }
     }
   }
@@ -385,6 +394,9 @@ export const GET_ALL_SEMINARS = gql`
             name
             slug
           }
+        }
+        eventsMetadata {
+          homepage
         }
       }
     }
@@ -531,6 +543,176 @@ export const GET_EXHIBITIONS = gql`
   query GetExhibitions($yearSlug: ID!) {
     eventYear(id: $yearSlug, idType: SLUG) {
       name
+    }
+  }
+`;
+
+export const GET_HOMEPAGE_HIGHLIGHTS = gql`
+  query GetHomepageHighlights {
+    categories(first: 4, where: { name: "homepage" }) {
+      nodes {
+        posts {
+          nodes {
+            title
+            excerpt
+            date
+            slug
+            link
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            categories {
+              nodes {
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export const GET_HOMEPAGE_ROADMAPS = gql`
+  query GetHomepageRoadmaps {
+    roadmaps(where: { homepage: "true"}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        title
+        slug
+        link
+        date
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        postSummary {
+          summary
+        }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
+        eventsMetadata {
+          homepagePosition
+        }
+      }
+    }
+  }
+`;
+
+export const GET_HOMEPAGE_ROADSHOWS = gql`
+  query GetHomepageRoadshows {
+    roadshows(where: { homepage: "true"}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        title
+        slug
+        link
+        date
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        postSummary {
+          summary
+        }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
+        eventsMetadata {
+          homepagePosition
+        }
+      }
+    }
+  }
+`;
+
+export const GET_HOMEPAGE_PROSERIES = gql`
+  query GetHomepageProseries {
+    proseries(where: { homepage: "true"}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        title
+        slug
+        link
+        date
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        postSummary {
+          summary
+        }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
+        eventsMetadata {
+          homepagePosition
+        }
+      }
+    }
+  }
+`;
+
+export const GET_HOMEPAGE_SEMINARS = gql`
+  query GetHomepageSeminars {
+    seminars(where: { homepage: "true"}) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        title
+        slug
+        link
+        date
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        postSummary {
+          summary
+        }
+        eventYears {
+          nodes {
+            name
+            slug
+          }
+        }
+        eventsMetadata {
+          homepagePosition
+        }
+      }
     }
   }
 `;

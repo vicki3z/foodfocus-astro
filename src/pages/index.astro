@@ -12,10 +12,13 @@ import {
   GET_LATEST_MAGAZINE,
   GET_BANNERS,
   GET_POSTS_BY_CATEGORY,
-  GET_ROADMAPS,
-  GET_PROSERIES,
+  GET_HOMEPAGE_HIGHLIGHTS,
+  GET_HOMEPAGE_ROADMAPS,
+  GET_HOMEPAGE_PROSERIES,
+  GET_HOMEPAGE_ROADSHOWS,
+  GET_HOMEPAGE_SEMINARS,
 } from "../lib/queries";
-import type { Magazine } from "../types/generated/graphql";
+import type { Category, Magazine } from "../types/generated/graphql";
 
 // Fetch all homepage data at build time
 const [
@@ -24,13 +27,15 @@ const [
   whatsInData,
   newsData,
   advertisementData,
+  ushareData,
+  roadmapsData,
+  proseriesData,
+  roadshowsData,
+  seminarsData,
 ] = await Promise.all([
   fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
   fetchGraphQL<any>(GET_BANNERS).catch(() => null),
-  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
-    first: 4,
-    category: "whats-in",
-  }).catch(() => null),
+  fetchGraphQL<{ categories: { nodes: Category[] } }>(GET_HOMEPAGE_HIGHLIGHTS).catch(() => null),
   fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
     first: 6,
     category: "news",
@@ -39,10 +44,17 @@ const [
     first: 3,
     category: "advertisement",
   }).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 2,
+    category: "ushare",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_ROADMAPS).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_PROSERIES).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_ROADSHOWS).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_SEMINARS).catch(() => null),
 ]);
 
-const roadmapsData = []
-const proseriesData = []
+
 
 // Process magazine data
 const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
@@ -82,14 +94,14 @@ const bottomBanners = allBanners
   .slice(0, 6);
 
 // Process What's In articles
-const whatsInArticles = (whatsInData?.posts?.nodes || []).map((post: any) => ({
+const whatsInArticles = (whatsInData?.categories?.nodes[0]?.posts?.nodes || []).map((post: any) => ({
   title: post.title,
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
   image: post.featuredImage?.node?.sourceUrl,
   imageAlt: post.featuredImage?.node?.altText || "",
-  category: post.categories?.nodes?.[0]?.name || "What's In",
+  category: post.categories?.nodes.find((c: Category) => c.name !== "Homepage")?.name || "What's In",
 }));
 
 // Process News articles
@@ -103,6 +115,17 @@ const newsArticles = (newsData?.posts?.nodes || []).map((post: any) => ({
   category: post.categories?.nodes?.[0]?.name || "News",
 }));
 
+// Process Ushare articles
+const ushareArticles = (ushareData?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl,
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes?.[0]?.slug || "Ushare",
+}));
+
 // Process Advertisements
 const advertisements = (advertisementData?.posts?.nodes || []).map(
   (post: any) => ({
@@ -114,40 +137,59 @@ const advertisements = (advertisementData?.posts?.nodes || []).map(
 );
 
 // Process Roadmaps
-const roadmapItems = (roadmapsData?.roadmaps?.nodes || []).map((item: any) => ({
-  title: item.title,
-  summary: item.postSummary?.summary || "",
-  slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl,
-  imageAlt: item.featuredImage?.node?.altText || "",
-  link: item.link,
-}));
-
-// Process Proseries
-const proseriesItems = (proseriesData?.proseries?.nodes || []).map(
-  (item: any) => ({
+const roadmapItems = (roadmapsData?.roadmaps?.nodes || [])
+  .map((item: any) => ({
     title: item.title,
-    summary: item.postSummary?.summary || "",
-    slug: item.slug,
+    category: "Roadmaps",
+    excerpt: item.postSummary?.summary || "",
+    slug: `roadmaps/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
     image: item.featuredImage?.node?.sourceUrl,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
-  }),
-);
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
 
-// Configurable sections
-const configurableSections = [
-  {
-    type: "roadmap",
-    label: "Roadmap",
-    items: roadmapItems,
-  },
-  {
-    type: "proseries",
-    label: "Proseries",
-    items: proseriesItems,
-  },
-];
+// Process Proseries
+const proseriesItems = (proseriesData?.proseries?.nodes || [])
+  .map(
+    (item: any) => ({
+      title: item.title,
+      category: "Proseries",
+      excerpt: item.postSummary?.summary || "",
+      slug: `proseries/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+      image: item.featuredImage?.node?.sourceUrl,
+      imageAlt: item.featuredImage?.node?.altText || "",
+      link: item.link,
+      position: item.eventsMetadata?.homepagePosition || 1,
+    }),
+  );
+
+const roadshowItems = (roadshowsData?.roadshows?.nodes || [])
+  .map((item: any) => ({
+    title: item.title,
+    excerpt: item.postSummary?.summary || "",
+    category: "Roadshows",
+    slug: `roadshows/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
+
+const seminarItems = (seminarsData?.seminars?.nodes || [])
+  .map((item: any) => ({
+    title: item.title,
+    excerpt: item.postSummary?.summary || "",
+    category: "Seminars",
+    slug: `seminars/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
+
+const configurationItems = [...roadmapItems, ...roadshowItems, ...proseriesItems, ...seminarItems]
+  .sort((a, b) => a.position - b.position);
 ---
 
 <BaseLayout title="Home">
@@ -179,9 +221,8 @@ const configurableSections = [
     newsArticles.length > 0 && (
       <NewsSection
         articles={newsArticles}
-        configurableSections={configurableSections.filter(
-          (s) => s.items.length > 0,
-        )}
+        ushareArticles={ushareArticles}
+        configurationItems={configurationItems}
       />
     )
   }
