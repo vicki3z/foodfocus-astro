@@ -7,11 +7,9 @@ import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import ArticleGrid from "../../components/sections/ArticleGrid.astro";
 import { fetchGraphQL } from "../../lib/graphql";
 import { GET_POSTS_BY_CATEGORY } from "../../lib/queries";
-import { getBaseUrl } from "../../lib/utils";
 
 const pageTitle = "News";
 const categorySlug = "news";
-const baseUrl = getBaseUrl();
 
 // Fetch posts
 const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
@@ -24,7 +22,7 @@ const articles = (data?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: post.featuredImage?.node?.sourceUrl,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || pageTitle,
 }));
@@ -47,7 +45,7 @@ const breadcrumbs = [{ label: pageTitle }];
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="/news" columns={3} />
+        <ArticleGrid articles={articles} baseHref="news" columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No articles found.

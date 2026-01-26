@@ -8,7 +8,6 @@ import ArticleContent from "../../components/sections/ArticleContent.astro";
 import OtherArticles from "../../components/sections/OtherArticles.astro";
 import { fetchGraphQL } from "../../lib/graphql";
 import { GET_POST_BY_SLUG, GET_POSTS_BY_CATEGORY } from "../../lib/queries";
-import { getBaseUrl } from "../../lib/utils";
 
 export async function getStaticPaths() {
   const data = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
@@ -26,7 +25,6 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const categorySlug = "whats-in";
 const categoryLabel = "What's In";
-const baseUrl = getBaseUrl();
 
 // Fetch the post
 const postData = await fetchGraphQL<any>(GET_POST_BY_SLUG, { slug }).catch(
@@ -52,14 +50,14 @@ const otherPosts = allPosts
 
 const otherArticles = otherPosts.map((p: any) => ({
   title: p.title,
-  image: p.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: p.featuredImage?.node?.sourceUrl,
   imageAlt: p.featuredImage?.node?.altText || "",
-  href: `${baseUrl}${categorySlug}/${p.slug}`,
+  href: `${categorySlug}/${p.slug}`,
   category: categoryLabel,
 }));
 
 const breadcrumbs = [
-  { label: categoryLabel, href: `${baseUrl}${categorySlug}` },
+  { label: categoryLabel, href: categorySlug },
   { label: post.title },
 ];
 ---

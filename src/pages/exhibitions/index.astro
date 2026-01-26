@@ -14,10 +14,8 @@ import {
   GET_EXHIBITIONS,
   GET_EVENT_YEARS,
 } from "../../lib/queries";
-import { getBaseUrl } from "../../lib/utils";
 
 const pageTitle = "Exhibition";
-const baseUrl = getBaseUrl();
 
 // Fetch exhibition page content
 const pageData = await fetchGraphQL<any>(GET_EXHIBITION_PAGE, {
@@ -49,7 +47,7 @@ const mediaPartners = (partnersData?.mediaPartners?.nodes || []).map(
   (partner: any) => ({
     title: partner.title,
     logo:
-      partner.bannerFields?.image?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+      partner.bannerFields?.image?.node?.sourceUrl,
     logoAlt: partner.bannerFields?.image?.node?.altText || partner.title,
     link: partner.bannerFields?.link || "",
   }),
@@ -65,13 +63,13 @@ const exhibitions = (data?.eventYear?.events?.nodes || []).map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: item.featuredImage?.node?.sourceUrl ,
   imageAlt: item.featuredImage?.node?.altText || "",
   category: pageTitle,
 }));
 
 const breadcrumbs = [
-  { label: "Events", href: `${baseUrl}events` },
+  { label: "Events", href: "/events" },
   { label: pageTitle },
 ];
 ---
@@ -142,7 +140,7 @@ const breadcrumbs = [
     <!-- Exhibitions Grid -->
     {
       exhibitions.length > 0 ? (
-        <ArticleGrid articles={exhibitions} columns={3} />
+        <ArticleGrid articles={exhibitions} baseHref="exhibitions" columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No exhibitions found for {currentYear}.

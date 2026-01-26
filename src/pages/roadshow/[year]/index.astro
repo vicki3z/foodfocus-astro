@@ -8,10 +8,8 @@ import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
-import { getBaseUrl } from "../../../lib/utils";
 
 const pageTitle = "Roadshow";
-const baseUrl = getBaseUrl();
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -45,12 +43,12 @@ const articles = (data?.eventYear?.roadshows?.nodes || []).map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: item.featuredImage?.node?.sourceUrl,
   imageAlt: item.featuredImage?.node?.altText || "",
   category: pageTitle,
 }));
 
-const breadcrumbs = [{ label: pageTitle, href: `${baseUrl}roadshow` }, { label: String(currentYear) }];
+const breadcrumbs = [{ label: pageTitle, href: `roadshow` }, { label: String(currentYear) }];
 ---
 
 <BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
@@ -87,7 +85,7 @@ const breadcrumbs = [{ label: pageTitle, href: `${baseUrl}roadshow` }, { label: 
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="/roadshow" columns={3} />
+        <ArticleGrid articles={articles} baseHref="roadshow" columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found for {currentYear}.

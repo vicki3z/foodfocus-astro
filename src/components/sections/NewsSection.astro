@@ -17,7 +17,6 @@ interface Article {
 interface ConfigSection {
   type: string;
   label: string;
-  href: string;
   items: any[];
 }
 
@@ -63,7 +62,7 @@ const baseUrl = getBaseUrl();
               excerpt={article.excerpt}
               title={article.title}
               date={article.date}
-              href={`${baseUrl}news/${article.slug}`}
+              href={`news/${article.slug}`}
               variant="horizontal"
             />
           ))}
@@ -84,7 +83,7 @@ const baseUrl = getBaseUrl();
                     category={article.category || "What's In"}
                     title={article.title}
                     date={article.date}
-                    href={`${baseUrl}${section.type}/${article.slug}`}
+                    href={`${section.type}/${article.slug}`}
                     variant="vertical"
                   />
                 ))}

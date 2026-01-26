@@ -16,9 +16,6 @@ import {
   GET_PROSERIES,
 } from "../lib/queries";
 import type { Magazine } from "../types/generated/graphql";
-import { getBaseUrl } from "../lib/utils";
-
-const baseUrl = getBaseUrl();
 
 // Fetch all homepage data at build time
 const [
@@ -90,7 +87,7 @@ const whatsInArticles = (whatsInData?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: post.featuredImage?.node?.sourceUrl,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || "What's In",
 }));
@@ -101,7 +98,7 @@ const newsArticles = (newsData?.posts?.nodes || []).map((post: any) => ({
   excerpt: post.excerpt,
   date: post.date,
   slug: post.slug,
-  image: post.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: post.featuredImage?.node?.sourceUrl,
   imageAlt: post.featuredImage?.node?.altText || "",
   category: post.categories?.nodes?.[0]?.name || "News",
 }));
@@ -121,7 +118,7 @@ const roadmapItems = (roadmapsData?.roadmaps?.nodes || []).map((item: any) => ({
   title: item.title,
   summary: item.postSummary?.summary || "",
   slug: item.slug,
-  image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+  image: item.featuredImage?.node?.sourceUrl,
   imageAlt: item.featuredImage?.node?.altText || "",
   link: item.link,
 }));
@@ -132,7 +129,7 @@ const proseriesItems = (proseriesData?.proseries?.nodes || []).map(
     title: item.title,
     summary: item.postSummary?.summary || "",
     slug: item.slug,
-    image: item.featuredImage?.node?.sourceUrl || `${baseUrl}images/placeholder.png`,
+    image: item.featuredImage?.node?.sourceUrl,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
   }),
@@ -143,13 +140,11 @@ const configurableSections = [
   {
     type: "roadmap",
     label: "Roadmap",
-    href: `${baseUrl}roadmap`,
     items: roadmapItems,
   },
   {
     type: "proseries",
     label: "Proseries",
-    href: `${baseUrl}proseries`,
     items: proseriesItems,
   },
 ];
