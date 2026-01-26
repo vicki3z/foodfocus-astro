@@ -9,7 +9,8 @@ import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_SEMINARS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 
-const pageTitle = "Seminar";
+const pageTitle = "Seminars";
+const pageSlug = "seminars";
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -48,7 +49,7 @@ const articles = (data?.eventYear?.seminars?.nodes || []).map((item: any) => ({
   category: pageTitle,
 }));
 
-const breadcrumbs = [{ label: pageTitle, href: `seminar` }, { label: String(currentYear) }];
+const breadcrumbs = [{ label: pageTitle, href: pageSlug }, { label: String(currentYear) }];
 ---
 
 <BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
@@ -76,7 +77,7 @@ const breadcrumbs = [{ label: pageTitle, href: `seminar` }, { label: String(curr
         <YearSelector
           years={availableYears.map(String)}
           defaultYear={String(currentYear)}
-          baseHref="/seminar"
+          baseHref={pageSlug}
           client:load
         />
       )
@@ -85,7 +86,7 @@ const breadcrumbs = [{ label: pageTitle, href: `seminar` }, { label: String(curr
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="seminar" columns={3} />
+        <ArticleGrid articles={articles} baseHref={pageSlug} columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found for {currentYear}.

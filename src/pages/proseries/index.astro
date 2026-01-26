@@ -10,6 +10,7 @@ import { fetchGraphQL } from "../../lib/graphql";
 import { GET_PROSERIES, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../lib/queries";
 
 const pageTitle = "Proseries";
+const pageSlug = "proseries";
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -75,7 +76,7 @@ const breadcrumbs = [{ label: pageTitle }];
         <YearSelector
           years={availableYears.map(String)}
           defaultYear={String(currentYear)}
-          baseHref="/proseries"
+          baseHref={pageSlug}
           client:load
         />
       )
@@ -84,7 +85,7 @@ const breadcrumbs = [{ label: pageTitle }];
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="proseries" columns={3} />
+        <ArticleGrid articles={articles} baseHref={pageSlug} columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found.

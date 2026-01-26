@@ -22,8 +22,8 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const cptSlug = "roadshow";
-const cptLabel = "Roadshow";
+const cptSlug = "roadshows";
+const cptLabel = "Roadshows";
 
 // Fetch the item
 const itemData = await fetchGraphQL<any>(GET_ROADSHOW_BY_SLUG, { slug }).catch(

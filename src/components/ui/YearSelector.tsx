@@ -1,3 +1,5 @@
+import { getBaseUrl } from "../../lib/utils";
+
 interface YearSelectorProps {
   years: string[];
   defaultYear?: string;
@@ -5,6 +7,7 @@ interface YearSelectorProps {
   onYearChange?: (year: string) => void;
 }
 
+const baseUrl = getBaseUrl();
 export function YearSelector({
   years,
   defaultYear,
@@ -19,8 +22,8 @@ export function YearSelector({
       const latestYear = years[0];
       // Navigate to base route for latest year, otherwise to /[baseHref]/[year]/
       const targetUrl = year === latestYear
-        ? baseHref
-        : `${baseHref}/${year}`;
+        ? `${baseUrl}${baseHref}`
+        : `${baseUrl}${baseHref}/${year}`;
 
       window.location.href = targetUrl;
     } else {

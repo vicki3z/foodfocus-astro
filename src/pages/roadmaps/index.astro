@@ -7,13 +7,14 @@ import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import ArticleGrid from "../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../lib/graphql";
-import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../lib/queries";
+import { GET_ROADMAPS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../lib/queries";
 
-const pageTitle = "Roadshow";
+const pageTitle = "Roadmaps";
+const pageSlug = "roadmaps";
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
-  slug: "food-focus-thailand-roadshow",
+  slug: "food-focus-thailand-roadmap",
 }).catch(() => null);
 
 const pageContent = pageData?.page?.content || "";
@@ -34,11 +35,11 @@ const currentYear = selectedYear
   : availableYears[0] || new Date().getFullYear();
 
 // Fetch CPT items for the selected year using taxonomy
-const data = await fetchGraphQL<any>(GET_ROADSHOWS, {
+const data = await fetchGraphQL<any>(GET_ROADMAPS, {
   yearSlug: String(currentYear),
 }).catch(() => null);
 
-const articles = (data?.eventYear?.roadshows?.nodes || []).map((item: any) => ({
+const articles = (data?.eventYear?.roadmaps?.nodes || []).map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
@@ -75,7 +76,7 @@ const breadcrumbs = [{ label: pageTitle }];
         <YearSelector
           years={availableYears.map(String)}
           defaultYear={String(currentYear)}
-          baseHref="/roadshow"
+          baseHref={pageSlug}
           client:load
         />
       )
@@ -84,7 +85,7 @@ const breadcrumbs = [{ label: pageTitle }];
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="roadshow" columns={3} />
+        <ArticleGrid articles={articles} baseHref={pageSlug} columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found.

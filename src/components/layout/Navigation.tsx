@@ -29,10 +29,10 @@ const navItems: NavItem[] = [
   {
     label: "Events",
     children: [
-      { label: "Roadmap", href: "/roadmap", description: "Industry roadmaps" },
+      { label: "Roadmaps", href: "/roadmaps", description: "Industry roadmaps" },
       {
-        label: "Roadshow",
-        href: "/roadshow",
+        label: "Roadshows",
+        href: "/roadshows",
         description: "Upcoming roadshows",
       },
       {
@@ -42,7 +42,7 @@ const navItems: NavItem[] = [
       },
       {
         label: "Exclusive Events",
-        href: "/seminar",
+        href: "/seminars",
         description: "Exclusive events",
       },
       {
@@ -67,7 +67,7 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const baseUrl = getBaseUrl();
-  
+
   // Helper to prepend baseUrl to internal paths
   const withBase = (path: string) => {
     if (path === "/") return baseUrl;

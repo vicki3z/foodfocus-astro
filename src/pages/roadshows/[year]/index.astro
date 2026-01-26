@@ -7,13 +7,14 @@ import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
 import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
-import { GET_ROADMAPS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
+import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 
-const pageTitle = "Roadmap";
+const pageTitle = "Roadshows";
+const pageSlug = "roadshows";
 
 // Fetch page content
 const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
-  slug: "food-focus-thailand-roadmap",
+  slug: "food-focus-thailand-roadshow",
 }).catch(() => null);
 
 const pageContent = pageData?.page?.content || "";
@@ -35,11 +36,11 @@ const { year, availableYears } = Astro.props;
 const currentYear = year;
 
 // Fetch CPT items for the selected year using taxonomy
-const data = await fetchGraphQL<any>(GET_ROADMAPS, {
+const data = await fetchGraphQL<any>(GET_ROADSHOWS, {
   yearSlug: String(currentYear),
 }).catch(() => null);
 
-const articles = (data?.eventYear?.roadmaps?.nodes || []).map((item: any) => ({
+const articles = (data?.eventYear?.roadshows?.nodes || []).map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
@@ -48,7 +49,7 @@ const articles = (data?.eventYear?.roadmaps?.nodes || []).map((item: any) => ({
   category: pageTitle,
 }));
 
-const breadcrumbs = [{ label: pageTitle, href: "roadmap" }, { label: String(currentYear) }];
+const breadcrumbs = [{ label: pageTitle, href: pageSlug }, { label: String(currentYear) }];
 ---
 
 <BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
@@ -76,7 +77,7 @@ const breadcrumbs = [{ label: pageTitle, href: "roadmap" }, { label: String(curr
         <YearSelector
           years={availableYears.map(String)}
           defaultYear={String(currentYear)}
-          baseHref="/roadmap"
+          baseHref={pageSlug}
           client:load
         />
       )
@@ -85,7 +86,7 @@ const breadcrumbs = [{ label: pageTitle, href: "roadmap" }, { label: String(curr
     <!-- Articles Grid -->
     {
       articles.length > 0 ? (
-        <ArticleGrid articles={articles} baseHref="roadmap" columns={3} />
+        <ArticleGrid articles={articles} baseHref={pageSlug} columns={3} />
       ) : (
         <p class="text-center text-[var(--color-text-muted)] py-12">
           No items found for {currentYear}.
