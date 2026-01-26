@@ -19,11 +19,7 @@ export function YearSelector({
 
     // If baseHref is provided, navigate to the dynamic route
     if (baseHref) {
-      const latestYear = years[0];
-      // Navigate to base route for latest year, otherwise to /[baseHref]/[year]/
-      const targetUrl = year === latestYear
-        ? `${baseUrl}${baseHref}`
-        : `${baseUrl}${baseHref}/${year}`;
+      const targetUrl = `${baseUrl}${baseHref}/${year}`
 
       window.location.href = targetUrl;
     } else {
