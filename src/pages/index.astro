@@ -10,7 +10,6 @@ import Container from "../components/layout/Container.astro";
 import { fetchGraphQL } from "../lib/graphql";
 import {
   GET_LATEST_MAGAZINE,
-  GET_TOP_BANNERS,
   GET_BOTTOM_BANNERS,
   GET_POSTS_BY_CATEGORY,
   GET_HOMEPAGE_HIGHLIGHTS,
@@ -24,7 +23,6 @@ import type { Category, Magazine } from "../types/generated/graphql";
 // Fetch all homepage data at build time
 const [
   magazineData,
-  topBannersData,
   bottomBannersData,
   whatsInData,
   newsData,
@@ -36,7 +34,6 @@ const [
   seminarsData,
 ] = await Promise.all([
   fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
-  fetchGraphQL<any>(GET_TOP_BANNERS).catch(() => null),
   fetchGraphQL<any>(GET_BOTTOM_BANNERS).catch(() => null),
   fetchGraphQL<{ categories: { nodes: Category[] } }>(GET_HOMEPAGE_HIGHLIGHTS).catch(() => null),
   fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
@@ -72,13 +69,6 @@ const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
       magazineNo: magazineData.magazineType.magazines.nodes[0].magazines?.magazineNo || "",
     } as unknown as Magazine)
   : undefined;
-
-const topBanners = (topBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
-  title: b.title,
-  image: b.bannerFields?.image?.node?.sourceUrl || "",
-  imageAlt: b.bannerFields?.image?.node?.altText || "",
-  link: b.bannerFields?.link || "",
-}))
 
 const bottomBanners = (bottomBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
   title: b.title,
@@ -188,17 +178,6 @@ const configurationItems = [...roadmapItems, ...roadshowItems, ...proseriesItems
 
 <BaseLayout title="Home">
   <HeroHeader client:load slot="header" magazine={magazine} />
-
-  <!-- Top Banner Carousel -->
-  {
-    topBanners.length > 0 && (
-      <section class="bg-white">
-        <Container class="py-4">
-          <BannerCarousel banners={topBanners} client:visible />
-        </Container>
-      </section>
-    )
-  }
 
   <!-- What's In Section -->
   {whatsInArticles.length > 0 && <WhatsInSection articles={whatsInArticles} />}
