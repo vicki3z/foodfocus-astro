@@ -66,7 +66,7 @@ const breadcrumbs = [
 ---
 
 <BaseLayout
-  title={post.title}
+  title={`${post.title} - What's In`}
   description={post.excerpt?.replace(/<[^>]*>/g, "").slice(0, 160)}
   image={post.featuredImage?.node?.sourceUrl}
   type="article"

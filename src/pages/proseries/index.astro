@@ -20,7 +20,7 @@ const latestYear = availableYears[0] || new Date().getFullYear();
 const redirectUrl = `${baseUrl}proseries/${latestYear}`;
 ---
 
-<BaseLayout title="Redirecting to ProSeries..." description="Redirecting to the latest proseries">
+<BaseLayout title="Proseries" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, with the expertise in organizing Food Focus Thailand Roadmap, we also organized seminar & conferences that definitely meet the partners’ needs.">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>

@@ -20,7 +20,7 @@ const latestYear = availableYears[0] || new Date().getFullYear();
 const redirectUrl = `${baseUrl}roadmaps/${latestYear}`;
 ---
 
-<BaseLayout title="Redirecting to Roadmaps..." description="Redirecting to the latest roadmaps">
+<BaseLayout title="Roadmaps" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Food Focus Thailand Roadmap is the edutainment seminar which broaden the knowledge in Food & Beverage Industry. Let’s inspire your innovation thoughts and share the valuable experience among technology users and technology providers.">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>

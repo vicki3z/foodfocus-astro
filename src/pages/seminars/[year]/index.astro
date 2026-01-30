@@ -10,7 +10,7 @@ import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_SEMINARS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 import type { EventListPageProps } from "../../../types/internals";
 
-const pageTitle = "Seminars";
+const pageTitle = "Seminars & Conferences";
 const pageSlug = "seminars";
 
 // Fetch page content
@@ -57,7 +57,10 @@ const breadcrumbs = [
 ];
 ---
 
-<BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
+<BaseLayout
+  title={`${pageTitle} ${currentYear}`}
+  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, with the expertise in organizing Food Focus Thailand Roadmap, we also organized seminar & conferences that definitely meet the partners’ needs."
+>
   <Header client:load slot="header" />
 
   <Container class="py-8">

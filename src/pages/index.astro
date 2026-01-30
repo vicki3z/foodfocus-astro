@@ -2,7 +2,10 @@
 import { fetchGraphQL } from "../lib/graphql";
 import { GET_PAGE_BY_SLUG } from "../lib/queries";
 import { Button } from "../components/ui/Button";
+import { getBaseUrl } from "../lib/utils";
 import "../styles/global.css";
+
+const baseUrl = getBaseUrl();
 
 // Fetch the popup page data
 const popupData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
@@ -12,8 +15,13 @@ const popupData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
 const popup = popupData?.page || null;
 const featuredImage = popup?.featuredImage?.node?.sourceUrl;
 const featuredImageAlt = popup?.featuredImage?.node?.altText || popup?.title || "";
-const pageTitle = popup?.title || "Food Focus Thailand";
 const pageContent = popup?.content || "";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const pageTitle = "Food Focus Thailand | Be Media Focus";
+const pageDescription = "Discover more about the no. 1 leading industry-focused magazine for food & beverage from Food Focus Thailand";
+
 ---
 
 <!doctype html>
@@ -21,9 +29,29 @@ const pageContent = popup?.content || "";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{pageTitle} | Food Focus Thailand</title>
-    <meta name="description" content="Food Focus Thailand" />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={pageDescription} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={featuredImage} />
+    <meta property="og:locale" content="th_TH" />
+    <meta property="og:site_name" content={pageTitle} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={featuredImage} />
   </head>
   <body class="min-h-screen flex items-center justify-center bg-black text-white">
     <div class="max-w-2xl mx-auto px-4 py-8 text-center">

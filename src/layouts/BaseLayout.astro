@@ -24,9 +24,14 @@ const {
   publishedTime,
 } = Astro.props;
 
-const siteTitle = title
-  ? `${title} | Food Focus Thailand`
-  : "Food Focus Thailand";
+// Handle different title formats
+// Home page passes full title: "Food Focus Thailand | Be Media Focus"
+// Other pages pass just page title: "Latest Events", "Contact Us", etc.
+const siteTitle = title === "Food Focus Thailand | Be Media Focus"
+  ? title
+  : title
+    ? `${title} - Food Focus Thailand | Be Media Focus`
+    : "Food Focus Thailand | Be Media Focus";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 // Fetch top banners for all pages

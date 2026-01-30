@@ -62,7 +62,7 @@ const breadcrumbs = [
 ---
 
 <BaseLayout
-  title={item.title}
+  title={`${item.title} - ${cptLabel} & Conferences`}
   description={item.postSummary?.summary?.slice(0, 160) || ""}
   image={item.featuredImage?.node?.sourceUrl}
   type="article"

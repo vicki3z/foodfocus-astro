@@ -8,9 +8,12 @@ import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 const pageTitle = "Contact Us";
 
 const breadcrumbs = [{ label: pageTitle }];
+
+const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=บริษัท+บี+มีเดีย+โฟกัส+(ประเทศไทย)+จำกัด`;
 ---
 
-<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+<BaseLayout title={pageTitle} description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Be Media Focus (Thailand) Co., Ltd. has established in 2006 to create the effective industry-focused media serving Food & Beverage professionals.">
   <Header client:load slot="header" />
 
   <Container class="py-8">
@@ -24,7 +27,7 @@ const breadcrumbs = [{ label: pageTitle }];
       </h1>
       <div class="flex gap-16 mb-16 justify-center">
         <img class="w-full max-w-[555px]" src="https://www.foodfocusthailand.com/images/upload/maps.jpg" alt="Be Media Focus (Thailand) Co., Ltd. Map" />
-        <iframe width="555" height="438" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC0mPfoxxoOS47lyK2KlWQNiMFTKV-CPeA&amp;q=บริษัท+บี+มีเดีย+โฟกัส+(ประเทศไทย)+จำกัด" frameborder="0" allowfullscreen></iframe>
+        <iframe width="555" height="438" src={mapsEmbedUrl} frameborder="0" allowfullscreen></iframe>
       </div>
       <div class="px-10 flex gap-10 justify-between">
         <div class="flex flex-col gap-6 items-center">

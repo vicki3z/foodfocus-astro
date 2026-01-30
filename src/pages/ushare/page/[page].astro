@@ -14,7 +14,7 @@ const categorySlug = 'ushare';
 
 export async function getStaticPaths() {
   const ITEMS_PER_PAGE = 12;
-  
+
   // Fetch all posts to calculate total pages
   const allPosts = await fetchAllPaginated<any>(
     GET_POSTS_BY_CATEGORY,
@@ -61,7 +61,7 @@ const articles = posts.map((post: any) => ({
 const breadcrumbs = [{ label: pageTitle, href: categorySlug }];
 ---
 
-<BaseLayout title={pageTitle} description={`Browse all ${pageTitle} articles`}>
+<BaseLayout title={`Activities - Page ${currentPage}`} description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, discover more about the no. 1 leading industry-focused magazine for food & beverage from Food Focus Thailand">
   <Header client:load slot="header" />
 
   <Container class="py-8">

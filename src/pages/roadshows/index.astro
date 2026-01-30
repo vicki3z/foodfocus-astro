@@ -20,7 +20,7 @@ const latestYear = availableYears[0] || new Date().getFullYear();
 const redirectUrl = `${baseUrl}roadshows/${latestYear}`;
 ---
 
-<BaseLayout title="Redirecting to Roadshows..." description="Redirecting to the latest roadshows">
+<BaseLayout title="Roadshows" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Being a part of the sustainable success of Thai Food & Beverage Industry, Food Focus Thailand has organized “Food Focus Thailand Roadshow” to provide knowledge to Food & Beverage entrepreneurs located in major cities in Thailand.">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>

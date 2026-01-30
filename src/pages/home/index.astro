@@ -176,7 +176,11 @@ const configurationItems = [...roadmapItems, ...roadshowItems, ...proseriesItems
   .sort((a, b) => a.position - b.position);
 ---
 
-<BaseLayout title="Home">
+<BaseLayout
+  title="Food Focus Thailand | Be Media Focus"
+  description="Discover more about the no. 1 leading industry-focused magazine for food & beverage from Food Focus Thailand"
+  image={magazine?.image}
+>
   <HeroHeader client:load slot="header" magazine={magazine} />
 
   <!-- What's In Section -->
