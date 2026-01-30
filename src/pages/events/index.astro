@@ -1,0 +1,371 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import ArticleCard from "../../components/ui/ArticleCard.astro";
+import { fetchGraphQL } from "../../lib/graphql";
+import {
+  GET_ROADMAPS,
+  GET_ROADSHOWS,
+  GET_PROSERIES,
+  GET_SEMINARS,
+  GET_EVENTS_BY_YEAR_AND_MONTH,
+  GET_EVENT_YEARS,
+} from "../../lib/queries";
+import { getBaseUrl } from "../../lib/utils";
+
+const pageTitle = "Latest Events";
+const baseUrl = getBaseUrl();
+
+// Get current year and month
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.toLocaleDateString("en-US", { month: "long" }).toLowerCase();
+
+// Fetch available years for fallback
+const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+const availableYears = (yearsData?.eventYears?.nodes || [])
+  .map((node: any) => parseInt(node.name))
+  .sort((a: number, b: number) => b - a);
+
+const latestYear = availableYears[0] || currentYear;
+
+// Fetch Roadmaps
+const roadmapsData = await fetchGraphQL<any>(GET_ROADMAPS, {
+  yearSlug: String(latestYear),
+}).catch(() => null);
+
+const roadmaps = (roadmapsData?.eventYear?.roadmaps?.nodes || [])
+  .slice(0, 3)
+  .map((item: any) => ({
+    title: item.title,
+    slug: item.slug,
+    date: item.date,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    excerpt: item.postSummary?.summary || "",
+    category: "Roadmap",
+  }));
+
+// Fetch Roadshows
+const roadshowsData = await fetchGraphQL<any>(GET_ROADSHOWS, {
+  yearSlug: String(latestYear),
+}).catch(() => null);
+
+const roadshows = (roadshowsData?.eventYear?.roadshows?.nodes || [])
+  .slice(0, 3)
+  .map((item: any) => ({
+    title: item.title,
+    slug: item.slug,
+    date: item.date,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    excerpt: item.postSummary?.summary || "",
+    category: "Roadshow",
+  }));
+
+// Fetch ProSeries
+const proseriesData = await fetchGraphQL<any>(GET_PROSERIES, {
+  yearSlug: String(latestYear),
+}).catch(() => null);
+
+const proseries = (proseriesData?.eventYear?.proseries?.nodes || [])
+  .slice(0, 3)
+  .map((item: any) => ({
+    title: item.title,
+    slug: item.slug,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    excerpt: item.postSummary?.summary || "",
+    category: "ProSeries",
+  }));
+
+// Fetch Seminars
+const seminarsData = await fetchGraphQL<any>(GET_SEMINARS, {
+  yearSlug: String(latestYear),
+}).catch(() => null);
+
+const seminars = (seminarsData?.eventYear?.seminars?.nodes || [])
+  .slice(0, 3)
+  .map((item: any) => ({
+    title: item.title,
+    slug: item.slug,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    excerpt: item.postSummary?.summary || "",
+    category: "Seminar",
+  }));
+
+// Fetch Exhibitions for current month and filter upcoming events
+const today = new Date();
+today.setHours(0, 0, 0, 0); // Reset to start of day for accurate comparison
+
+const exhibitionsData = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
+  year: String(currentYear),
+  month: currentMonth,
+}).catch(() => null);
+
+// Filter and sort current month exhibitions (exclude today, only future events)
+let upcomingExhibitions = (exhibitionsData?.events?.nodes || [])
+  .filter((item: any) => {
+    const dateEnd = item.eventsGroupField?.dateEnd;
+    if (!dateEnd) return false;
+    const endDate = new Date(dateEnd);
+    endDate.setHours(0, 0, 0, 0);
+    return endDate > today; // Strictly greater than today (exclude events ending today)
+  })
+  .map((item: any) => ({
+    title: item.eventsGroupField?.fullEventName || "",
+    location: item.eventsGroupField?.location || "",
+    dateStart: item.eventsGroupField?.dateStart || "",
+    dateEnd: item.eventsGroupField?.dateEnd || "",
+    website: item.eventsGroupField?.website || "",
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || item.eventsGroupField?.fullEventName || "",
+    category: "Exhibition",
+  }));
+
+// If we don't have enough upcoming events, fetch from next month
+if (upcomingExhibitions.length < 3) {
+  const nextMonthDate = new Date(currentYear, now.getMonth() + 1, 1);
+  const nextMonth = nextMonthDate.toLocaleDateString("en-US", { month: "long" }).toLowerCase();
+  const nextYear = nextMonthDate.getFullYear();
+
+  const nextMonthData = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
+    year: String(nextYear),
+    month: nextMonth,
+  }).catch(() => null);
+
+  const nextMonthExhibitions = (nextMonthData?.events?.nodes || [])
+    .map((item: any) => ({
+      title: item.eventsGroupField?.fullEventName || "",
+      location: item.eventsGroupField?.location || "",
+      dateStart: item.eventsGroupField?.dateStart || "",
+      dateEnd: item.eventsGroupField?.dateEnd || "",
+      website: item.eventsGroupField?.website || "",
+      image: item.featuredImage?.node?.sourceUrl,
+      imageAlt: item.featuredImage?.node?.altText || item.eventsGroupField?.fullEventName || "",
+      category: "Exhibition",
+    }));
+
+  upcomingExhibitions = [...upcomingExhibitions, ...nextMonthExhibitions];
+}
+
+// Sort by earliest date and take first 3
+const exhibitions = upcomingExhibitions
+  .sort((a: any, b: any) => {
+    const dateA = new Date(a.dateStart || a.dateEnd);
+    const dateB = new Date(b.dateStart || b.dateEnd);
+    return dateA.getTime() - dateB.getTime();
+  })
+  .slice(0, 3);
+
+const breadcrumbs = [{ label: "Latest Events" }];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description="Discover the latest events from Food Focus Thailand including roadmaps, roadshows, proseries, seminars, and exhibitions"
+>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Title -->
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-8 uppercase">
+      {pageTitle}
+    </h1>
+
+    <!-- FFT Roadmap Section -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-dark)] uppercase">
+          FFT ROADMAP
+        </h2>
+        <a
+          href={`${baseUrl}roadmaps/${latestYear}`}
+          class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        >
+          See all
+        </a>
+      </div>
+      {
+        roadmaps.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {roadmaps.map((event: any) => (
+              <ArticleCard
+                image={event.image}
+                imageAlt={event.imageAlt}
+                category={event.category}
+                title={event.title}
+                excerpt={event.excerpt}
+                date={event.date}
+                href={`/roadmaps/${latestYear}/${event.slug}`}
+                variant="vertical"
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-[var(--color-text-muted)] py-8">
+            No latest roadmap events available at the moment.
+          </p>
+        )
+      }
+    </section>
+
+    <!-- FFT Roadshow Section -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-dark)] uppercase">
+          FFT ROADSHOW
+        </h2>
+        <a
+          href={`${baseUrl}roadshows/${latestYear}`}
+          class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        >
+          See all
+        </a>
+      </div>
+      {
+        roadshows.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {roadshows.map((event: any) => (
+              <ArticleCard
+                image={event.image}
+                imageAlt={event.imageAlt}
+                category={event.category}
+                title={event.title}
+                excerpt={event.excerpt}
+                date={event.date}
+                href={`/roadshows/${latestYear}/${event.slug}`}
+                variant="vertical"
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-[var(--color-text-muted)] py-8">
+            No latest roadshow events available at the moment.
+          </p>
+        )
+      }
+    </section>
+
+    <!-- FFT ProSeries Section -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-dark)] uppercase">
+          FFT PROSERIES
+        </h2>
+        <a
+          href={`${baseUrl}proseries/${latestYear}`}
+          class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        >
+          See all
+        </a>
+      </div>
+      {
+        proseries.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {proseries.map((event: any) => (
+              <ArticleCard
+                image={event.image}
+                imageAlt={event.imageAlt}
+                category={event.category}
+                title={event.title}
+                excerpt={event.excerpt}
+                date={event.date}
+                href={`/proseries/${latestYear}/${event.slug}`}
+                variant="vertical"
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-[var(--color-text-muted)] py-8">
+            No latest proseries events available at the moment.
+          </p>
+        )
+      }
+    </section>
+
+    <!-- Exclusive Event (Seminars) Section -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-dark)] uppercase">
+          EXCLUSIVE EVENT
+        </h2>
+        <a
+          href={`${baseUrl}seminars/${latestYear}`}
+          class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        >
+          See all
+        </a>
+      </div>
+      {
+        seminars.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {seminars.map((event: any) => (
+              <ArticleCard
+                image={event.image}
+                imageAlt={event.imageAlt}
+                category={event.category}
+                title={event.title}
+                excerpt={event.excerpt}
+                date={event.date}
+                href={`/seminars/${latestYear}/${event.slug}`}
+                variant="vertical"
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-[var(--color-text-muted)] py-8">
+            No latest exclusive events available at the moment.
+          </p>
+        )
+      }
+    </section>
+
+    <!-- Exhibition Section -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-dark)] uppercase">
+          EXHIBITION
+        </h2>
+        <a
+          href={`${baseUrl}exhibitions/${currentYear}/${currentMonth}`}
+          class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
+        >
+          See all
+        </a>
+      </div>
+      {
+        exhibitions.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {exhibitions.map((event: any) => (
+              <ArticleCard
+                image={event.image}
+                imageAlt={event.imageAlt}
+                category={event.category}
+                title={event.title}
+                location={event.location}
+                dateStart={event.dateStart}
+                dateEnd={event.dateEnd}
+                website={event.website}
+                variant="vertical"
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="text-center text-[var(--color-text-muted)] py-8">
+            No upcoming exhibitions at the moment.
+          </p>
+        )
+      }
+    </section>
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>

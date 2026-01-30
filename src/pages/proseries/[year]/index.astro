@@ -51,7 +51,11 @@ const articles = (data?.eventYear?.proseries?.nodes || []).map((item: any) => ({
   category: pageTitle,
 }));
 
-const breadcrumbs = [{ label: pageTitle, href: pageSlug }, { label: String(currentYear) }];
+const breadcrumbs = [
+  { label: "Events", href: "events" },
+  { label: pageTitle, href: pageSlug },
+  { label: String(currentYear) }
+];
 ---
 
 <BaseLayout title={`${pageTitle} ${currentYear}`} description={`Browse all ${pageTitle} events from ${currentYear}`}>
