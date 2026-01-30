@@ -8,6 +8,7 @@ const footerLinks = [
   {
     title: "Events",
     links: [
+      { label: "Latest Events", href: "/events" },
       { label: "Roadmaps", href: `/roadmaps/${currentYear}` },
       { label: "Roadshows", href: `/roadshows/${currentYear}` },
       { label: "Proseries", href: `/proseries/${currentYear}` },
@@ -28,7 +29,7 @@ const footerLinks = [
     links: [
       { label: "Food Focus Thailand", href: "/magazines" },
       { label: "Special Supplements", href: "/magazines" },
-      { label: "Subscribe", href: "/subscribe" },
+      { label: "Subscribe", href: "https://goo.gl/forms/oP25aDCXWbNASbXh2", externalLink: true },
     ],
   },
 ];
@@ -114,8 +115,10 @@ const baseUrl = getBaseUrl();
                   {column.links.map((link) => (
                     <li>
                       <a
-                        href={`${baseUrl}${link.href.slice(1)}`}
+                        href={link.externalLink ? link.href : `${baseUrl}${link.href.slice(1)}`}
                         class="text-sm text-white/80 hover:text-white transition-colors"
+                        target={link.externalLink ? "_blank" : "_self"}
+                        rel={link.externalLink ? "noopener noreferrer" : ""}
                       >
                         {link.label}
                       </a>
@@ -205,8 +208,8 @@ const baseUrl = getBaseUrl();
         </p>
         <div class="flex gap-4 text-xs">
           <a href="#">Sitemap</a>
-          <a href="#">Contact Us</a>
-          <a href="#">Subscribe</a>
+          <a href={`${baseUrl}contact-us`}>Contact Us</a>
+          <a href="https://goo.gl/forms/oP25aDCXWbNASbXh2" target="_blank" rel="noopener noreferrer">Subscribe</a>
         </div>
       </div>
 
