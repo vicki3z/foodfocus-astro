@@ -1,0 +1,215 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { HeroHeader } from "../../components/layout/HeroHeader";
+import Footer from "../../components/layout/Footer.astro";
+import { BannerCarousel } from "../../components/sections/BannerCarousel";
+import WhatsInSection from "../../components/sections/WhatsInSection.astro";
+import AdvertisementSection from "../../components/sections/AdvertisementSection.astro";
+import NewsSection from "../../components/sections/NewsSection.astro";
+import Container from "../../components/layout/Container.astro";
+import { fetchGraphQL } from "../../lib/graphql";
+import {
+  GET_LATEST_MAGAZINE,
+  GET_BOTTOM_BANNERS,
+  GET_POSTS_BY_CATEGORY,
+  GET_HOMEPAGE_HIGHLIGHTS,
+  GET_HOMEPAGE_ROADMAPS,
+  GET_HOMEPAGE_PROSERIES,
+  GET_HOMEPAGE_ROADSHOWS,
+  GET_HOMEPAGE_SEMINARS,
+} from "../../lib/queries";
+import type { Category } from "../../types/generated/graphql";
+
+// Fetch all homepage data at build time
+const [
+  magazineData,
+  bottomBannersData,
+  whatsInData,
+  newsData,
+  advertisementData,
+  ushareData,
+  roadmapsData,
+  proseriesData,
+  roadshowsData,
+  seminarsData,
+] = await Promise.all([
+  fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
+  fetchGraphQL<any>(GET_BOTTOM_BANNERS).catch(() => null),
+  fetchGraphQL<{ categories: { nodes: Category[] } }>(GET_HOMEPAGE_HIGHLIGHTS).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 6,
+    category: "news",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 3,
+    category: "advertisement",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
+    first: 2,
+    category: "ushare",
+  }).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_ROADMAPS).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_PROSERIES).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_ROADSHOWS).catch(() => null),
+  fetchGraphQL<any>(GET_HOMEPAGE_SEMINARS).catch(() => null),
+]);
+
+
+
+// Process magazine data
+const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
+  ? {
+      title: magazineData.magazineType.magazines.nodes[0].title,
+      date: magazineData.magazineType.magazines.nodes[0].date,
+      image:
+        magazineData.magazineType.magazines.nodes[0].magazines?.image?.node?.sourceUrl || "",
+      imageAlt:
+        magazineData.magazineType.magazines.nodes[0].magazines?.image?.node?.altText || "",
+      link: magazineData.magazineType.magazines.nodes[0].magazines?.link || "",
+      magazineNo: magazineData.magazineType.magazines.nodes[0].magazines?.magazineNo || "",
+    }
+  : undefined;
+
+const bottomBanners = (bottomBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
+  title: b.title,
+  image: b.bannerFields?.image?.node?.sourceUrl || "",
+  imageAlt: b.bannerFields?.image?.node?.altText || "",
+  link: b.bannerFields?.link || "",
+}))
+
+// Process What's In articles
+const whatsInArticles = (whatsInData?.categories?.nodes[0]?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl,
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes.find((c: Category) => c.name !== "Homepage")?.name || "What's In",
+}));
+
+// Process News articles
+const newsArticles = (newsData?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl,
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes?.[0]?.name || "News",
+}));
+
+// Process Ushare articles
+const ushareArticles = (ushareData?.posts?.nodes || []).map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  date: post.date,
+  slug: post.slug,
+  image: post.featuredImage?.node?.sourceUrl,
+  imageAlt: post.featuredImage?.node?.altText || "",
+  category: post.categories?.nodes?.[0]?.slug || "Ushare",
+}));
+
+// Process Advertisements
+const advertisements = (advertisementData?.posts?.nodes || []).map(
+  (post: any) => ({
+    title: post.title,
+    image: post.featuredImage?.node?.sourceUrl || "",
+    imageAlt: post.featuredImage?.node?.altText || "",
+    link: post.link || "",
+  }),
+);
+
+// Process Roadmaps
+const roadmapItems = (roadmapsData?.roadmaps?.nodes || [])
+  .map((item: any) => ({
+    title: item.title,
+    category: "Roadmaps",
+    excerpt: item.postSummary?.summary || "",
+    slug: `roadmaps/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
+
+// Process Proseries
+const proseriesItems = (proseriesData?.proseries?.nodes || [])
+  .map(
+    (item: any) => ({
+      title: item.title,
+      category: "Proseries",
+      excerpt: item.postSummary?.summary || "",
+      slug: `proseries/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+      image: item.featuredImage?.node?.sourceUrl,
+      imageAlt: item.featuredImage?.node?.altText || "",
+      link: item.link,
+      position: item.eventsMetadata?.homepagePosition || 1,
+    }),
+  );
+
+const roadshowItems = (roadshowsData?.roadshows?.nodes || [])
+  .map((item: any) => ({
+    title: item.title,
+    excerpt: item.postSummary?.summary || "",
+    category: "Roadshows",
+    slug: `roadshows/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
+
+const seminarItems = (seminarsData?.seminars?.nodes || [])
+  .map((item: any) => ({
+    title: item.title,
+    excerpt: item.postSummary?.summary || "",
+    category: "Seminars",
+    slug: `seminars/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    image: item.featuredImage?.node?.sourceUrl,
+    imageAlt: item.featuredImage?.node?.altText || "",
+    link: item.link,
+    position: item.eventsMetadata?.homepagePosition || 1,
+  }));
+
+const configurationItems = [...roadmapItems, ...roadshowItems, ...proseriesItems, ...seminarItems]
+  .sort((a, b) => a.position - b.position);
+---
+
+<BaseLayout title="Home">
+  <HeroHeader client:load slot="header" magazine={magazine} />
+
+  <!-- What's In Section -->
+  {whatsInArticles.length > 0 && <WhatsInSection articles={whatsInArticles} />}
+
+  <!-- Advertisement Section -->
+  {
+    advertisements.length > 0 && (
+      <AdvertisementSection advertisements={advertisements} />
+    )
+  }
+
+  <!-- News Section with Configurable Sidebar -->
+  {
+    newsArticles.length > 0 && (
+      <NewsSection
+        articles={newsArticles}
+        ushareArticles={ushareArticles}
+        configurationItems={configurationItems}
+      />
+    )
+  }
+
+  <!-- Bottom Banner Carousel -->
+  {
+    bottomBanners.length > 0 && (
+      <section class="bg-white">
+        <Container class="py-8">
+          <BannerCarousel banners={bottomBanners} client:visible />
+        </Container>
+      </section>
+    )
+  }
+
+  <Footer slot="footer" />
+</BaseLayout>
