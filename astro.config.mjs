@@ -14,9 +14,11 @@ export default defineConfig({
 
   build: {
     inlineStylesheets: "auto",
+    concurrency: 4,
+
   },
 
-  compressHTML: true,
+  compressHTML: false,
 
   image: {
     domains: ["foodfocusthailand.com"],
@@ -24,6 +26,17 @@ export default defineConfig({
   },
 
   vite: {
+    build: {
+      minify: 'esbuild',
+      target: 'es2022'
+    },
+    esbuild: {
+			target: 'es2022',
+			// Fast minification settings
+			minifyIdentifiers: false, // Skip for speed
+			minifySyntax: true,
+			minifyWhitespace: true,
+		},
     plugins: [tailwindcss()],
   },
 

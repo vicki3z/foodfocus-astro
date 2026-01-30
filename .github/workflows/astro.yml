@@ -55,17 +55,6 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-      - name: Restore build cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.BUILD_PATH }}/.astro
-          key: ${{ runner.os }}-astro-${{ steps.date.outputs.date }}-${{ hashFiles('src/**', 'public/**') }}
-          restore-keys: |
-            ${{ runner.os }}-astro-${{ steps.date.outputs.date }}-
-            ${{ runner.os }}-astro-
       - name: Build with Astro
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} astro build \
