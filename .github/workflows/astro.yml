@@ -61,6 +61,9 @@ jobs:
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.BUILD_PATH }}
+        env:
+          WP_GRAPHQL_URL: ${{ vars.WP_GRAPHQL_URL }}
+          PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
