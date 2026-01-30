@@ -255,7 +255,7 @@ export const GET_ROADMAPS = gql`
   query GetRoadmaps($yearSlug: ID!) {
     eventYear(id: $yearSlug, idType: SLUG) {
       name
-      roadmaps {
+      roadmaps(first: 50) {
         nodes {
           title
           slug
@@ -281,7 +281,7 @@ export const GET_ROADSHOWS = gql`
   query GetRoadshows($yearSlug: ID!) {
     eventYear(id: $yearSlug, idType: SLUG) {
       name
-      roadshows {
+      roadshows(first: 50) {
         nodes {
           title
           slug
@@ -307,7 +307,7 @@ export const GET_SEMINARS = gql`
   query GetSeminars($yearSlug: ID!) {
     eventYear(id: $yearSlug, idType: SLUG) {
       name
-      seminars {
+      seminars(first: 50) {
         nodes {
           title
           slug
@@ -333,7 +333,7 @@ export const GET_PROSERIES = gql`
   query GetProseries($yearSlug: ID!) {
     eventYear(id: $yearSlug, idType: SLUG) {
       name
-      proseries {
+      proseries(first: 50) {
         nodes {
           title
           slug
