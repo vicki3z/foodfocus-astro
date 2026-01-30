@@ -1,4 +1,4 @@
-import { gql } from "graphql-request";
+import { gql } from "@urql/core";
 
 // Magazine Query - Get latest FFT magazine
 export const GET_LATEST_MAGAZINE = gql`

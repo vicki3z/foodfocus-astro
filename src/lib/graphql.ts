@@ -1,23 +1,25 @@
-import { GraphQLClient } from 'graphql-request';
+import { createClient, cacheExchange, fetchExchange } from '@urql/core';
+import type { DocumentInput } from '@urql/core';
 
 const endpoint = import.meta.env.WP_GRAPHQL_URL;
 
-export const client = new GraphQLClient(endpoint, {
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const client = createClient({
+  url: endpoint,
+  exchanges: [cacheExchange, fetchExchange],
 });
 
 export async function fetchGraphQL<T>(
-  query: string,
+  query: DocumentInput,
   variables?: Record<string, unknown>
 ): Promise<T> {
-  try {
-    return await client.request<T>(query, variables);
-  } catch (error) {
-    console.error('GraphQL fetch error:', error);
-    throw error;
+  const result = await client.query(query, variables ?? {}).toPromise();
+
+  if (result.error) {
+    console.error('GraphQL fetch error:', result.error);
+    throw result.error;
   }
+
+  return result.data as T;
 }
 
 /**
@@ -31,7 +33,7 @@ export async function fetchGraphQL<T>(
  * @returns Promise<any[]> - Array of all fetched nodes
  */
 export async function fetchAllPaginated<T>(
-  query: string,
+  query: DocumentInput,
   variables: Record<string, any>,
   getNodes: (data: T) => any[],
   getPageInfo: (data: T) => { hasNextPage: boolean; endCursor: string | null }
