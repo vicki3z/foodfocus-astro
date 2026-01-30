@@ -28,6 +28,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Events",
+    href: "/events",
     children: [
       { label: "Roadmaps", href: `/roadmaps`, description: "Industry roadmaps" },
       {
@@ -100,7 +101,7 @@ export function Navigation() {
                 {item.children ? (
                   <>
                     <NavigationMenu.Trigger className="group flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-[#3A5F47] transition-colors rounded-md hover:bg-white/10 cursor-pointer">
-                      {item.label}
+                      {item.href ? <a href={withBase(item.href)}>{item.label}</a> : item.label}
                       <svg
                         className="w-3 h-3 transition-transform group-data-[state=open]:rotate-180"
                         fill="none"

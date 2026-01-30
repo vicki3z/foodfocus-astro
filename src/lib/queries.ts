@@ -191,6 +191,7 @@ export const GET_POSTS_BY_CATEGORY = gql`
       }
       nodes {
         title
+        content
         excerpt
         date
         slug
@@ -285,6 +286,15 @@ export const GET_LATEST_EVENTS = gql`
           slug
           link
           date
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          postSummary {
+            summary
+          }
         }
       }
       roadshows(first: 3) {
@@ -293,6 +303,15 @@ export const GET_LATEST_EVENTS = gql`
           slug
           link
           date
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          postSummary {
+            summary
+          }
         }
       }
       proseries(first: 3) {
@@ -301,6 +320,15 @@ export const GET_LATEST_EVENTS = gql`
           slug
           link
           date
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          postSummary {
+            summary
+          }
         }
       }
       seminars(first: 3) {
@@ -309,6 +337,15 @@ export const GET_LATEST_EVENTS = gql`
           slug
           link
           date
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          postSummary {
+            summary
+          }
         }
       }
     }
