@@ -24,7 +24,46 @@ export const GET_LATEST_MAGAZINE = gql`
   }
 `;
 
-// Get all Magazines Query
+// Get all Magazine Types (taxonomies)
+export const GET_MAGAZINE_TYPES = gql`
+  query GetMagazineTypes {
+    magazineTypes {
+      nodes {
+        name
+        slug
+        count
+      }
+    }
+  }
+`;
+
+// Get Magazines by Type Query (taxonomy-based like roadshows)
+export const GET_MAGAZINES_BY_TYPE = gql`
+  query GetMagazinesByType($typeSlug: ID!) {
+    magazineType(id: $typeSlug, idType: SLUG) {
+      name
+      slug
+      magazines(first: 200) {
+        nodes {
+          title
+          date
+          magazines {
+            image {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            link
+            magazineNo
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Legacy: Get all Magazines Query (for backwards compatibility)
 export const GET_ALL_MAGAZINES = gql`
   query GetAllMagazines($first: Int!, $after: String) {
     magazines(first: $first, after: $after) {
@@ -62,6 +101,12 @@ export const GET_PAGE_BY_SLUG = gql`
     page(id: $slug, idType: URI) {
       title
       content
+      featuredImage {
+        node {
+          sourceUrl
+          altText
+        }
+      }
     }
   }
 `;

@@ -6,7 +6,7 @@ import Container from "../../components/layout/Container.astro";
 import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import { MagazinesTabs } from "../../components/sections/MagazinesTabs";
 import { fetchGraphQL } from "../../lib/graphql";
-import { GET_ALL_MAGAZINES, GET_PAGE_BY_SLUG } from "../../lib/queries";
+import { GET_MAGAZINES_BY_TYPE, GET_PAGE_BY_SLUG } from "../../lib/queries";
 
 const pageTitle = "Magazines";
 
@@ -17,21 +17,36 @@ const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
 
 const pageContent = pageData?.page?.content || "";
 
-// Fetch all magazines
-const data = await fetchGraphQL<any>(GET_ALL_MAGAZINES, {
-  first: 1000,
-}).catch(() => null);
+// Fetch magazines by type (FFT and Supplement)
+const [fftData, supplementData] = await Promise.all([
+  fetchGraphQL<any>(GET_MAGAZINES_BY_TYPE, { typeSlug: "fft" }).catch(() => null),
+  fetchGraphQL<any>(GET_MAGAZINES_BY_TYPE, { typeSlug: "supplement" }).catch(() => null),
+]);
 
-const magazines = (data?.magazines?.nodes || []).map((magazine: any) => ({
+// Map FFT magazines
+const fftMagazines = (fftData?.magazineType?.magazines?.nodes || []).map((magazine: any) => ({
   title: magazine.title,
   date: magazine.date,
-  image:
-    magazine.magazines?.image?.node?.sourceUrl,
+  image: magazine.magazines?.image?.node?.sourceUrl,
   imageAlt: magazine.magazines?.image?.node?.altText || magazine.title || "",
   link: magazine.magazines?.link || "",
   magazineNo: magazine.magazines?.magazineNo || 0,
-  magazineType: magazine.magazineTypes?.nodes?.[0]?.slug || "",
+  magazineType: "fft",
 }));
+
+// Map Supplement magazines
+const supplementMagazines = (supplementData?.magazineType?.magazines?.nodes || []).map((magazine: any) => ({
+  title: magazine.title,
+  date: magazine.date,
+  image: magazine.magazines?.image?.node?.sourceUrl,
+  imageAlt: magazine.magazines?.image?.node?.altText || magazine.title || "",
+  link: magazine.magazines?.link || "",
+  magazineNo: magazine.magazines?.magazineNo || 0,
+  magazineType: "supplement",
+}));
+
+// Combine all magazines
+const magazines = [...fftMagazines, ...supplementMagazines];
 
 const breadcrumbs = [{ label: pageTitle }];
 ---
