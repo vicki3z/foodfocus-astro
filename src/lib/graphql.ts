@@ -8,6 +8,19 @@ const client = createClient({
   exchanges: [cacheExchange, fetchExchange],
 });
 
+/**
+ * Ensures HTTP URLs from the WordPress domain are upgraded to HTTPS.
+ * WordPress may return http:// sourceUrl values which cause
+ * mixed content errors when the site is served over HTTPS.
+ */
+function enforceHttps<T>(data: T): T {
+  if (!endpoint) return data;
+  const wpHost = new URL(endpoint).hostname;
+  const json = JSON.stringify(data);
+  const fixed = json.replaceAll(`http://${wpHost}`, `https://${wpHost}`);
+  return JSON.parse(fixed);
+}
+
 export async function fetchGraphQL<T>(
   query: DocumentInput,
   variables?: Record<string, unknown>
@@ -19,7 +32,7 @@ export async function fetchGraphQL<T>(
     throw result.error;
   }
 
-  return result.data as T;
+  return enforceHttps(result.data as T);
 }
 
 /**
