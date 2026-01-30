@@ -7,7 +7,7 @@ import ArticleHeader from "../../../components/sections/ArticleHeader.astro";
 import ArticleContent from "../../../components/sections/ArticleContent.astro";
 import OtherArticles from "../../../components/sections/OtherArticles.astro";
 import { fetchGraphQL } from "../../../lib/graphql";
-import { GET_ROADSHOW_BY_SLUG, GET_ALL_ROADSHOWS } from "../../../lib/queries";
+import { GET_ALL_ROADSHOWS } from "../../../lib/queries";
 
 export async function getStaticPaths() {
   const data = await fetchGraphQL<any>(GET_ALL_ROADSHOWS, { first: 100 }).catch(
@@ -18,29 +18,19 @@ export async function getStaticPaths() {
 
   return items.map((item: any) => ({
     params: { slug: item.slug, year: item.eventYears.nodes[0].slug },
+    props: { item, allItems: items },
   }));
 }
 
 const { slug, year } = Astro.params;
+const { item, allItems } = Astro.props as any;
 const cptSlug = "roadshows";
 const cptLabel = "Roadshows";
-
-// Fetch the item
-const itemData = await fetchGraphQL<any>(GET_ROADSHOW_BY_SLUG, { slug }).catch(
-  () => null,
-);
-const item = itemData?.roadshow;
 
 if (!item) {
   return Astro.redirect("/404");
 }
 
-// Fetch other items for sidebar
-const otherData = await fetchGraphQL<any>(GET_ALL_ROADSHOWS, { first: 10 }).catch(
-  () => null,
-);
-
-const allItems = otherData?.roadshows?.nodes || [];
 const otherItems = allItems
   .filter((i: any) => i.slug !== slug)
   .sort(() => Math.random() - 0.5)

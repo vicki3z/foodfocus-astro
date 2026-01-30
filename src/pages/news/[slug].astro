@@ -12,7 +12,7 @@ import { GET_POST_BY_SLUG, GET_POSTS_BY_CATEGORY } from "../../lib/queries";
 export async function getStaticPaths() {
   const posts = await fetchAllPaginated<any>(
     GET_POSTS_BY_CATEGORY,
-    { first: 100, category: "news" },
+    { first: 30, category: "news" },
     (data) => data?.posts?.nodes || [],
     (data) => ({
       hasNextPage: data?.posts?.pageInfo?.hasNextPage || false,
@@ -22,14 +22,16 @@ export async function getStaticPaths() {
 
   return posts.map((post: any) => ({
     params: { slug: post.slug },
+    props: { allPosts: posts },
   }));
 }
 
 const { slug } = Astro.params;
+const { allPosts } = Astro.props as any;
 const categorySlug = "news";
 const categoryLabel = "News";
 
-// Fetch the post
+// Fetch the post content (not available in list query)
 const postData = await fetchGraphQL<any>(GET_POST_BY_SLUG, { slug }).catch(
   () => null,
 );
@@ -39,13 +41,7 @@ if (!post) {
   return Astro.redirect("/404");
 }
 
-// Fetch other articles for sidebar
-const otherData = await fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
-  first: 10,
-  category: categorySlug,
-}).catch(() => null);
-
-const allPosts = otherData?.posts?.nodes || [];
+// Use allPosts from props for sidebar instead of refetching
 const otherPosts = allPosts
   .filter((p: any) => p.slug !== slug)
   .sort(() => Math.random() - 0.5)

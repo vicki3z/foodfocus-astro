@@ -276,6 +276,45 @@ export const GET_ROADMAPS = gql`
   }
 `;
 
+export const GET_LATEST_EVENTS = gql`
+  query GetLatestEvents($yearSlug: ID!) {
+    eventYear(id: $yearSlug, idType: SLUG) {
+      roadmaps(first: 3) {
+        nodes {
+          title
+          slug
+          link
+          date
+        }
+      }
+      roadshows(first: 3) {
+        nodes {
+          title
+          slug
+          link
+          date
+        }
+      }
+      proseries(first: 3) {
+        nodes {
+          title
+          slug
+          link
+          date
+        }
+      }
+      seminars(first: 3) {
+        nodes {
+          title
+          slug
+          link
+          date
+        }
+      }
+    }
+  }
+`
+
 // Roadshows Query by Year Taxonomy
 export const GET_ROADSHOWS = gql`
   query GetRoadshows($yearSlug: ID!) {
@@ -364,6 +403,7 @@ export const GET_ALL_PROSERIES = gql`
       }
       nodes {
         title
+        content
         slug
         link
         date
@@ -400,6 +440,7 @@ export const GET_ALL_ROADMAPS = gql`
       }
       nodes {
         title
+        content
         slug
         link
         date
@@ -436,6 +477,7 @@ export const GET_ALL_ROADSHOWS = gql`
       }
       nodes {
         title
+        content
         slug
         link
         date
@@ -472,6 +514,7 @@ export const GET_ALL_SEMINARS = gql`
       }
       nodes {
         title
+        content
         slug
         link
         date

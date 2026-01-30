@@ -7,12 +7,7 @@ import Breadcrumb from "../../components/ui/Breadcrumb.astro";
 import ArticleCard from "../../components/ui/ArticleCard.astro";
 import { fetchGraphQL } from "../../lib/graphql";
 import {
-  GET_ROADMAPS,
-  GET_ROADSHOWS,
-  GET_PROSERIES,
-  GET_SEMINARS,
-  GET_EVENTS_BY_YEAR_AND_MONTH,
-  GET_EVENT_YEARS,
+  GET_LATEST_EVENTS,
 } from "../../lib/queries";
 import { getBaseUrl } from "../../lib/utils";
 
@@ -24,20 +19,15 @@ const now = new Date();
 const currentYear = now.getFullYear();
 const currentMonth = now.toLocaleDateString("en-US", { month: "long" }).toLowerCase();
 
-// Fetch available years for fallback
-const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
-const availableYears = (yearsData?.eventYears?.nodes || [])
-  .map((node: any) => parseInt(node.name))
-  .sort((a: number, b: number) => b - a);
+const latestYear = currentYear;
 
-const latestYear = availableYears[0] || currentYear;
+// Reset to start of day for accurate comparison (needed before parallel fetch)
+now.setHours(0, 0, 0, 0);
 
-// Fetch Roadmaps
-const roadmapsData = await fetchGraphQL<any>(GET_ROADMAPS, {
-  yearSlug: String(latestYear),
-}).catch(() => null);
+// Fetch all event data in parallel
+const latestEventsData = await fetchGraphQL<any>(GET_LATEST_EVENTS, { yearSlug: String(latestYear) }).catch(() => null);
 
-const roadmaps = (roadmapsData?.eventYear?.roadmaps?.nodes || [])
+const roadmaps = (latestEventsData?.eventYear?.roadmaps?.nodes || [])
   .slice(0, 3)
   .map((item: any) => ({
     title: item.title,
@@ -49,12 +39,7 @@ const roadmaps = (roadmapsData?.eventYear?.roadmaps?.nodes || [])
     category: "Roadmap",
   }));
 
-// Fetch Roadshows
-const roadshowsData = await fetchGraphQL<any>(GET_ROADSHOWS, {
-  yearSlug: String(latestYear),
-}).catch(() => null);
-
-const roadshows = (roadshowsData?.eventYear?.roadshows?.nodes || [])
+const roadshows = (latestEventsData?.eventYear?.roadshows?.nodes || [])
   .slice(0, 3)
   .map((item: any) => ({
     title: item.title,
@@ -66,12 +51,7 @@ const roadshows = (roadshowsData?.eventYear?.roadshows?.nodes || [])
     category: "Roadshow",
   }));
 
-// Fetch ProSeries
-const proseriesData = await fetchGraphQL<any>(GET_PROSERIES, {
-  yearSlug: String(latestYear),
-}).catch(() => null);
-
-const proseries = (proseriesData?.eventYear?.proseries?.nodes || [])
+const proseries = (latestEventsData?.eventYear?.proseries?.nodes || [])
   .slice(0, 3)
   .map((item: any) => ({
     title: item.title,
@@ -82,12 +62,7 @@ const proseries = (proseriesData?.eventYear?.proseries?.nodes || [])
     category: "ProSeries",
   }));
 
-// Fetch Seminars
-const seminarsData = await fetchGraphQL<any>(GET_SEMINARS, {
-  yearSlug: String(latestYear),
-}).catch(() => null);
-
-const seminars = (seminarsData?.eventYear?.seminars?.nodes || [])
+const seminars = (latestEventsData?.eventYear?.seminars?.nodes || [])
   .slice(0, 3)
   .map((item: any) => ({
     title: item.title,
@@ -97,70 +72,6 @@ const seminars = (seminarsData?.eventYear?.seminars?.nodes || [])
     excerpt: item.postSummary?.summary || "",
     category: "Seminar",
   }));
-
-// Fetch Exhibitions for current month and filter upcoming events
-const today = new Date();
-today.setHours(0, 0, 0, 0); // Reset to start of day for accurate comparison
-
-const exhibitionsData = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
-  year: String(currentYear),
-  month: currentMonth,
-}).catch(() => null);
-
-// Filter and sort current month exhibitions (exclude today, only future events)
-let upcomingExhibitions = (exhibitionsData?.events?.nodes || [])
-  .filter((item: any) => {
-    const dateEnd = item.eventsGroupField?.dateEnd;
-    if (!dateEnd) return false;
-    const endDate = new Date(dateEnd);
-    endDate.setHours(0, 0, 0, 0);
-    return endDate > today; // Strictly greater than today (exclude events ending today)
-  })
-  .map((item: any) => ({
-    title: item.eventsGroupField?.fullEventName || "",
-    location: item.eventsGroupField?.location || "",
-    dateStart: item.eventsGroupField?.dateStart || "",
-    dateEnd: item.eventsGroupField?.dateEnd || "",
-    website: item.eventsGroupField?.website || "",
-    image: item.featuredImage?.node?.sourceUrl,
-    imageAlt: item.featuredImage?.node?.altText || item.eventsGroupField?.fullEventName || "",
-    category: "Exhibition",
-  }));
-
-// If we don't have enough upcoming events, fetch from next month
-if (upcomingExhibitions.length < 3) {
-  const nextMonthDate = new Date(currentYear, now.getMonth() + 1, 1);
-  const nextMonth = nextMonthDate.toLocaleDateString("en-US", { month: "long" }).toLowerCase();
-  const nextYear = nextMonthDate.getFullYear();
-
-  const nextMonthData = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
-    year: String(nextYear),
-    month: nextMonth,
-  }).catch(() => null);
-
-  const nextMonthExhibitions = (nextMonthData?.events?.nodes || [])
-    .map((item: any) => ({
-      title: item.eventsGroupField?.fullEventName || "",
-      location: item.eventsGroupField?.location || "",
-      dateStart: item.eventsGroupField?.dateStart || "",
-      dateEnd: item.eventsGroupField?.dateEnd || "",
-      website: item.eventsGroupField?.website || "",
-      image: item.featuredImage?.node?.sourceUrl,
-      imageAlt: item.featuredImage?.node?.altText || item.eventsGroupField?.fullEventName || "",
-      category: "Exhibition",
-    }));
-
-  upcomingExhibitions = [...upcomingExhibitions, ...nextMonthExhibitions];
-}
-
-// Sort by earliest date and take first 3
-const exhibitions = upcomingExhibitions
-  .sort((a: any, b: any) => {
-    const dateA = new Date(a.dateStart || a.dateEnd);
-    const dateB = new Date(b.dateStart || b.dateEnd);
-    return dateA.getTime() - dateB.getTime();
-  })
-  .slice(0, 3);
 
 const breadcrumbs = [{ label: "Latest Events" }];
 ---
@@ -341,29 +252,6 @@ const breadcrumbs = [{ label: "Latest Events" }];
           See all
         </a>
       </div>
-      {
-        exhibitions.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {exhibitions.map((event: any) => (
-              <ArticleCard
-                image={event.image}
-                imageAlt={event.imageAlt}
-                category={event.category}
-                title={event.title}
-                location={event.location}
-                dateStart={event.dateStart}
-                dateEnd={event.dateEnd}
-                website={event.website}
-                variant="vertical"
-              />
-            ))}
-          </div>
-        ) : (
-          <p class="text-center text-[var(--color-text-muted)] py-8">
-            No upcoming exhibitions at the moment.
-          </p>
-        )
-      }
     </section>
   </Container>
 

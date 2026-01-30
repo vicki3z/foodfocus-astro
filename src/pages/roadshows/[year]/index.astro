@@ -8,40 +8,43 @@ import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
-import type { EventListPageProps } from "../../../types/internals";
 
 const pageTitle = "Roadshows";
 const pageSlug = "roadshows";
 
-// Fetch page content
-const pageData = await fetchGraphQL<any>(GET_PAGE_BY_SLUG, {
-  slug: "food-focus-thailand-roadshow",
-}).catch(() => null);
-
-const pageContent = pageData?.page?.content || "";
-
-// Generate static paths for all available years
 export async function getStaticPaths() {
-  const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+  const [yearsData, pageData] = await Promise.all([
+    fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null),
+    fetchGraphQL<any>(GET_PAGE_BY_SLUG, { slug: "food-focus-thailand-roadshow" }).catch(() => null),
+  ]);
+
   const availableYears = (yearsData?.eventYears?.nodes || [])
     .map((node: any) => parseInt(node.name))
     .sort((a: number, b: number) => b - a);
 
-  return availableYears.map((year: number) => ({
-    params: { year: String(year) },
-    props: { year, availableYears },
-  }));
+  const pageContent = pageData?.page?.content || "";
+
+  // Prefetch items for each year in parallel
+  const yearItemsMap = await Promise.all(
+    availableYears.map(async (year: number) => {
+      const data = await fetchGraphQL<any>(GET_ROADSHOWS, { yearSlug: String(year) }).catch(() => null);
+      return { year, items: data?.eventYear?.roadshows?.nodes || [] };
+    })
+  );
+
+  return availableYears.map((year: number) => {
+    const yearData = yearItemsMap.find((d) => d.year === year);
+    return {
+      params: { year: String(year) },
+      props: { year, availableYears, pageContent, items: yearData?.items || [] },
+    };
+  });
 }
 
-const { year, availableYears } = Astro.props as EventListPageProps;
+const { year, availableYears, pageContent, items } = Astro.props as any;
 const currentYear = year;
 
-// Fetch CPT items for the selected year using taxonomy
-const data = await fetchGraphQL<any>(GET_ROADSHOWS, {
-  yearSlug: String(currentYear),
-}).catch(() => null);
-
-const articles = (data?.eventYear?.roadshows?.nodes || []).map((item: any) => ({
+const articles = items.map((item: any) => ({
   title: item.title,
   excerpt: item.postSummary?.summary || "",
   slug: item.slug,
@@ -59,7 +62,7 @@ const breadcrumbs = [
 
 <BaseLayout
   title={`${pageTitle} ${currentYear}`}
-  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Being a part of the sustainable success of Thai Food & Beverage Industry, Food Focus Thailand has organized “Food Focus Thailand Roadshow” to provide knowledge to Food & Beverage entrepreneurs located in major cities in Thailand."
+  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Being a part of the sustainable success of Thai Food & Beverage Industry, Food Focus Thailand Roadshow to provide knowledge to Food & Beverage entrepreneurs located in major cities in Thailand."
 >
   <Header client:load slot="header" />
 

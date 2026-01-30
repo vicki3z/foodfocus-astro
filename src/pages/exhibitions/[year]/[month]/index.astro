@@ -51,17 +51,34 @@ export async function getStaticPaths() {
     "december",
   ];
 
-  const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+  // Fetch years, page content, and media partners in parallel (shared across all pages)
+  const [yearsData, pageData, partnersData] = await Promise.all([
+    fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null),
+    fetchGraphQL<any>(GET_EXHIBITION_PAGE, { slug: "exhibition" }).catch(() => null),
+    fetchGraphQL<any>(GET_MEDIA_PARTNERS).catch(() => null),
+  ]);
+
   const availableYears = (yearsData?.eventYears?.nodes || [])
     .map((node: any) => parseInt(node.name))
     .sort((a: number, b: number) => b - a);
+
+  const pageContent = pageData?.page?.content || "";
+
+  const mediaPartners = (partnersData?.mediaPartners?.nodes || []).map(
+    (partner: any) => ({
+      title: partner.title,
+      logo: partner.bannerFields?.image?.node?.sourceUrl,
+      logoAlt: partner.bannerFields?.image?.node?.altText || partner.title,
+      link: partner.bannerFields?.link || "",
+    }),
+  );
 
   const paths = [];
   for (const year of availableYears) {
     for (const month of MONTHS) {
       paths.push({
         params: { year: String(year), month },
-        props: { year, month, availableYears },
+        props: { year, month, availableYears, pageContent, mediaPartners },
       });
     }
   }
@@ -69,18 +86,11 @@ export async function getStaticPaths() {
   return paths;
 }
 
-// Fetch page content
-const pageData = await fetchGraphQL<any>(GET_EXHIBITION_PAGE, {
-  slug: "exhibition",
-}).catch(() => null);
-
-const pageContent = pageData?.page?.content || "";
-
-const { year, month, availableYears } = Astro.props;
+const { year, month, availableYears, pageContent, mediaPartners } = Astro.props as any;
 const currentYear = year;
 const currentMonth = month;
 
-// Fetch exhibitions for the selected year and month
+// Fetch exhibitions for the selected year and month (unique per page)
 const data = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
   year: String(currentYear),
   month: currentMonth,
@@ -99,19 +109,6 @@ const exhibitions = (data?.events?.nodes || []).map((item: any) => ({
   category: pageTitle,
 }));
 
-// Fetch media partners
-const partnersData = await fetchGraphQL<any>(GET_MEDIA_PARTNERS).catch(
-  () => null,
-);
-const mediaPartners = (partnersData?.mediaPartners?.nodes || []).map(
-  (partner: any) => ({
-    title: partner.title,
-    logo: partner.bannerFields?.image?.node?.sourceUrl,
-    logoAlt: partner.bannerFields?.image?.node?.altText || partner.title,
-    link: partner.bannerFields?.link || "",
-  }),
-);
-
 const breadcrumbs = [
   { label: "Events", href: "events" },
   { label: pageTitle, href: pageSlug },
@@ -124,7 +121,7 @@ const monthName = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
 <BaseLayout
   title={`${pageTitle} - ${monthName} ${currentYear}`}
-  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, we have participated in the notable Food & Beverage related exhibitions both domestic and overseas to promote our magazine and other activities. That’s why we possess the strong and powerful database."
+  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, we have participated in the notable Food & Beverage related exhibitions both domestic and overseas to promote our magazine and other activities. That's why we possess the strong and powerful database."
 >
   <Header client:load slot="header" />
 
