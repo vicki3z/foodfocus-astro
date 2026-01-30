@@ -766,3 +766,23 @@ export const GET_HOMEPAGE_SEMINARS = gql`
     }
   }
 `;
+
+export const GET_EVENTS_BY_YEAR_AND_MONTH = gql`
+  query GetEventsByYearAndMonth($year: String!, $month: String!) {
+    events(first: 10, where: {year: $year, month: $month}) {
+      nodes {
+        eventsGroupField {
+          fullEventName
+          location
+          dateStart
+          dateEnd
+          website
+          tel
+          email
+          year
+          month
+        }
+      }
+    }
+  }
+`

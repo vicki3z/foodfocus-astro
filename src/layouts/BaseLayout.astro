@@ -87,6 +87,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     }
 
     <meta name="generator" content={Astro.generator} />
+    
+    <!-- Additional head content slot -->
+    <slot name="head" />
   </head>
   <body class="min-h-screen flex flex-col bg-white text-(--color-text-dark)">
     <a

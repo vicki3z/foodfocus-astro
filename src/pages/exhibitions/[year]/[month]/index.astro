@@ -1,0 +1,248 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { Header } from "../../../../components/layout/Header";
+import Footer from "../../../../components/layout/Footer.astro";
+import Container from "../../../../components/layout/Container.astro";
+import Breadcrumb from "../../../../components/ui/Breadcrumb.astro";
+import ArticleCard from "../../../../components/ui/ArticleCard.astro";
+import { MediaPartnerSlider } from "../../../../components/sections/MediaPartnerSlider";
+import { fetchGraphQL } from "../../../../lib/graphql";
+import { getPlaceHolderImageSrc } from "../../../../lib/utils";
+import {
+  GET_EVENTS_BY_YEAR_AND_MONTH,
+  GET_MEDIA_PARTNERS,
+  GET_EVENT_YEARS,
+  GET_EXHIBITION_PAGE,
+} from "../../../../lib/queries";
+
+const pageTitle = "Exhibition";
+const pageSlug = "exhibitions";
+
+// Available months
+const MONTHS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+// Generate static paths for all available years and months
+export async function getStaticPaths() {
+  const MONTHS = [
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
+
+  const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+  const availableYears = (yearsData?.eventYears?.nodes || [])
+    .map((node: any) => parseInt(node.name))
+    .sort((a: number, b: number) => b - a);
+
+  const paths = [];
+  for (const year of availableYears) {
+    for (const month of MONTHS) {
+      paths.push({
+        params: { year: String(year), month },
+        props: { year, month, availableYears },
+      });
+    }
+  }
+
+  return paths;
+}
+
+// Fetch page content
+const pageData = await fetchGraphQL<any>(GET_EXHIBITION_PAGE, {
+  slug: "exhibition",
+}).catch(() => null);
+
+const pageContent = pageData?.page?.content || "";
+
+const { year, month, availableYears } = Astro.props;
+const currentYear = year;
+const currentMonth = month;
+
+// Fetch exhibitions for the selected year and month
+const data = await fetchGraphQL<any>(GET_EVENTS_BY_YEAR_AND_MONTH, {
+  year: String(currentYear),
+  month: currentMonth,
+}).catch(() => null);
+
+const exhibitions = (data?.events?.nodes || []).map((item: any) => ({
+  title: item.eventsGroupField?.fullEventName || "",
+  location: item.eventsGroupField?.location || "",
+  dateStart: item.eventsGroupField?.dateStart || "",
+  dateEnd: item.eventsGroupField?.dateEnd || "",
+  website: item.eventsGroupField?.website || "",
+  tel: item.eventsGroupField?.tel || "",
+  email: item.eventsGroupField?.email || "",
+  image: item.featuredImage?.node?.sourceUrl || getPlaceHolderImageSrc(),
+  imageAlt: item.featuredImage?.node?.altText || item.eventsGroupField?.fullEventName || "",
+  category: pageTitle,
+}));
+
+// Fetch media partners
+const partnersData = await fetchGraphQL<any>(GET_MEDIA_PARTNERS).catch(
+  () => null,
+);
+const mediaPartners = (partnersData?.mediaPartners?.nodes || []).map(
+  (partner: any) => ({
+    title: partner.title,
+    logo: partner.bannerFields?.image?.node?.sourceUrl,
+    logoAlt: partner.bannerFields?.image?.node?.altText || partner.title,
+    link: partner.bannerFields?.link || "",
+  }),
+);
+
+const breadcrumbs = [
+  { label: "Events", href: "events" },
+  { label: pageTitle, href: pageSlug },
+  { label: `${currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} ${currentYear}` },
+];
+
+// Format month for display
+const monthName = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
+---
+
+<BaseLayout
+  title={`${pageTitle} - ${monthName} ${currentYear}`}
+  description={`Browse exhibitions from ${monthName} ${currentYear}`}
+>
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <!-- Page Title -->
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-4 uppercase">
+      {pageTitle}
+    </h1>
+
+    <!-- Page Content -->
+    {
+      pageContent ? (
+        <div
+          class="mb-8 text-[var(--color-text-muted)]"
+          set:html={pageContent}
+        />
+      ) : (
+        <div class="mb-8 text-[var(--color-text-dark)]">
+          <p class="mb-4">
+            We Have Participated In The Notable Food & Beverage Related
+            Exhibitions Both Domestic And Overseas To Promote Our Magazine And
+            Other Activities. That's Why We Possess The Strong And Powerful
+            Database.
+          </p>
+          <p class="text-[var(--color-text-muted)]">
+            องค์กรของเรามีส่วนร่วมในนิทรรศการและเหตุสินค้าที่เกี่ยวข้องกับท้องทิศตาสุดสหกรณ์อาหารและเครื่องดื่นทั้งในและต่างประเทศ
+            เพื่อเผยแพร่และประชาสัมพันธ์นิตยสารและกิจกรรมต่างๆ
+            ทำให้เรามีฐานข้อมูลสมาชิกที่แข็งแกร่งและอัพเดทอยู่เสมอ
+          </p>
+        </div>
+      )
+    }
+
+    <!-- Media Partners Section -->
+    {
+      mediaPartners.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-[var(--color-text-dark)] mb-6">
+            MEDIA PARTNERS
+          </h2>
+          <MediaPartnerSlider partners={mediaPartners} client:load />
+        </section>
+      )
+    }
+
+    <!-- Month and Year Selector -->
+    <div class="flex gap-4 mb-6">
+      <select
+        id="month-selector"
+        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-[var(--color-text-dark)] bg-white hover:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-colors"
+      >
+        {
+          MONTHS.map((m) => (
+            <option value={m} selected={m === currentMonth}>
+              {m.toUpperCase()}
+            </option>
+          ))
+        }
+      </select>
+
+      <select
+        id="year-selector"
+        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-[var(--color-text-dark)] bg-white hover:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-colors"
+      >
+        {
+          availableYears.map((y: number) => (
+            <option value={y} selected={y === currentYear}>
+              {y}
+            </option>
+          ))
+        }
+      </select>
+    </div>
+
+    <!-- Exhibitions List -->
+    {
+      exhibitions.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {exhibitions.map((exhibition: any) => (
+            <ArticleCard
+              image={exhibition.image}
+              imageAlt={exhibition.imageAlt}
+              category={exhibition.category}
+              title={exhibition.title}
+              location={exhibition.location}
+              dateStart={exhibition.dateStart}
+              dateEnd={exhibition.dateEnd}
+              website={exhibition.website}
+              tel={exhibition.tel}
+              email={exhibition.email}
+              variant="vertical"
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-[var(--color-text-muted)] py-12">
+          No exhibitions found for {monthName} {currentYear}.
+        </p>
+      )
+    }
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script>
+  const monthSelector = document.getElementById("month-selector") as HTMLSelectElement;
+  const yearSelector = document.getElementById("year-selector") as HTMLSelectElement;
+
+  function navigate() {
+    const month = monthSelector.value;
+    const year = yearSelector.value;
+    window.location.href = `/exhibitions/${year}/${month}`;
+  }
+
+  monthSelector?.addEventListener("change", navigate);
+  yearSelector?.addEventListener("change", navigate);
+</script>

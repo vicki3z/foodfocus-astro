@@ -1,4 +1,8 @@
 ---
+import { getBaseUrl } from "../../lib/utils";
+
+const baseUrl = getBaseUrl();
+
 interface Props {
   currentPage: number;
   totalPages: number;
@@ -6,6 +10,9 @@ interface Props {
 }
 
 const { currentPage, totalPages, baseHref } = Astro.props;
+
+// baseUrl already has trailing slash, so no need for additional /
+const href = `${baseUrl}${baseHref}`;
 
 // Generate array of page numbers to display
 const getPageNumbers = () => {
@@ -52,7 +59,7 @@ const pageNumbers = getPageNumbers();
   {
     currentPage > 1 ? (
       <a
-        href={`/${baseHref}/page/${currentPage - 1}`}
+        href={`${href}/page/${currentPage - 1}`}
         class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
         aria-label="Previous page"
       >
@@ -82,7 +89,7 @@ const pageNumbers = getPageNumbers();
           </span>
         ) : (
           <a
-            href={`/${baseHref}/page/${page}`}
+            href={`${href}/page/${page}`}
             class="px-3 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
             aria-label={`Go to page ${page}`}
           >
@@ -102,7 +109,7 @@ const pageNumbers = getPageNumbers();
   {
     currentPage < totalPages ? (
       <a
-        href={`/${baseHref}/page/${currentPage + 1}`}
+        href={`${href}/page/${currentPage + 1}`}
         class="px-4 py-2 text-sm font-medium text-[var(--color-text-dark)] bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-[var(--color-primary)] transition-colors"
         aria-label="Next page"
       >

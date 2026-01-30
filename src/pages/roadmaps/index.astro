@@ -4,12 +4,23 @@ import { Header } from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer.astro";
 import Container from "../../components/layout/Container.astro";
 import { getBaseUrl } from "../../lib/utils";
+import { fetchGraphQL } from "../../lib/graphql";
+import { GET_EVENT_YEARS } from "../../lib/queries";
 
 const baseUrl = getBaseUrl();
-const redirectUrl = `${baseUrl}news/page/1`;
+
+// Fetch available years from taxonomy
+const yearsData = await fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null);
+const availableYears = (yearsData?.eventYears?.nodes || [])
+  .map((node: any) => parseInt(node.name))
+  .sort((a: number, b: number) => b - a);
+
+// Get the latest year or default to current year
+const latestYear = availableYears[0] || new Date().getFullYear();
+const redirectUrl = `${baseUrl}roadmaps/${latestYear}`;
 ---
 
-<BaseLayout title="Redirecting to News..." description="Redirecting to news articles">
+<BaseLayout title="Redirecting to Roadmaps..." description="Redirecting to the latest roadmaps">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>
@@ -27,7 +38,7 @@ const redirectUrl = `${baseUrl}news/page/1`;
       </div>
       <h1 class="text-2xl font-bold text-[var(--color-text-dark)] mb-2">Redirecting...</h1>
       <p class="text-[var(--color-text-muted)]">
-        Taking you to <a href={redirectUrl} class="text-[var(--color-primary)] hover:underline">News</a>
+        Taking you to <a href={redirectUrl} class="text-[var(--color-primary)] hover:underline">Roadmaps {latestYear}</a>
       </p>
     </div>
   </Container>
