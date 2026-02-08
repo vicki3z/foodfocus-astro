@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const { allPosts } = Astro.props as any;
 const categorySlug = "ushare";
-const categoryLabel = "Ushare";
+const categoryLabel = "U Share. V Care.";
 
 // Fetch the post content (not available in list query)
 const postData = await fetchGraphQL<any>(GET_POST_BY_SLUG, { slug }).catch(
@@ -53,7 +53,7 @@ const otherArticles = otherPosts.map((p: any) => ({
   imageAlt: p.featuredImage?.node?.altText || "",
   href: `${categorySlug}/${p.slug}`,
   excerpt: p.excerpt,
-  category: categorySlug,
+  category: 'U share',
 }));
 
 const breadcrumbs = [
@@ -63,7 +63,7 @@ const breadcrumbs = [
 ---
 
 <BaseLayout
-  title={`${post.title} - Activities`}
+  title={`${post.title} - U Share. V Care.`}
   description={post.excerpt?.replace(/<[^>]*>/g, "").slice(0, 160)}
   image={post.featuredImage?.node?.sourceUrl}
   type="article"
@@ -81,7 +81,7 @@ const breadcrumbs = [
           featuredImageAlt={post.featuredImage?.node?.altText}
           date={post.date}
           breadcrumbs={breadcrumbs}
-          category={categoryLabel}
+          category="U share"
         />
 
         <ArticleContent content={post.content} />

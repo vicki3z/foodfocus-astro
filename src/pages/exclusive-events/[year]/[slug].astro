@@ -24,8 +24,8 @@ export async function getStaticPaths() {
 
 const { slug, year } = Astro.params;
 const { item, allItems } = Astro.props as any;
-const cptSlug = "seminars";
-const cptLabel = "Seminars";
+const cptSlug = "exclusive-events";
+const cptLabel = "Exclusive Events";
 
 if (!item) {
   return Astro.redirect("/404");

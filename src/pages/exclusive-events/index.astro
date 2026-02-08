@@ -17,10 +17,10 @@ const availableYears = (yearsData?.eventYears?.nodes || [])
 
 // Get the latest year or default to current year
 const latestYear = availableYears[0] || new Date().getFullYear();
-const redirectUrl = `${baseUrl}seminars/${latestYear}`;
+const redirectUrl = `${baseUrl}exclusive-events/${latestYear}`;
 ---
 
-<BaseLayout title="Seminars & Conferences" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, with the expertise in organizing Food Focus Thailand Roadmap, we also organized seminar & conferences that definitely meet the partners’ needs.">
+<BaseLayout title="Exclusive Events" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, with the expertise in organizing Food Focus Thailand Roadmap, we also organized seminar & conferences that definitely meet the partners’ needs.">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>

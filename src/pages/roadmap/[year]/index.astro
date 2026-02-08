@@ -7,15 +7,15 @@ import Breadcrumb from "../../../components/ui/Breadcrumb.astro";
 import ArticleGrid from "../../../components/sections/ArticleGrid.astro";
 import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
-import { GET_SEMINARS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
+import { GET_ROADMAPS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 
-const pageTitle = "Seminars & Conferences";
-const pageSlug = "seminars";
+const pageTitle = "Roadmap";
+const pageSlug = "roadmap";
 
 export async function getStaticPaths() {
   const [yearsData, pageData] = await Promise.all([
     fetchGraphQL<any>(GET_EVENT_YEARS).catch(() => null),
-    fetchGraphQL<any>(GET_PAGE_BY_SLUG, { slug: "seminars-conferences" }).catch(() => null),
+    fetchGraphQL<any>(GET_PAGE_BY_SLUG, { slug: "food-focus-thailand-roadmap" }).catch(() => null),
   ]);
 
   const availableYears = (yearsData?.eventYears?.nodes || [])
@@ -27,8 +27,8 @@ export async function getStaticPaths() {
   // Prefetch items for each year in parallel
   const yearItemsMap = await Promise.all(
     availableYears.map(async (year: number) => {
-      const data = await fetchGraphQL<any>(GET_SEMINARS, { yearSlug: String(year) }).catch(() => null);
-      return { year, items: data?.eventYear?.seminars?.nodes || [] };
+      const data = await fetchGraphQL<any>(GET_ROADMAPS, { yearSlug: String(year) }).catch(() => null);
+      return { year, items: data?.eventYear?.roadmaps?.nodes || [] };
     })
   );
 
@@ -60,10 +60,7 @@ const breadcrumbs = [
 ];
 ---
 
-<BaseLayout
-  title={`${pageTitle} ${currentYear}`}
-  description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, with the expertise in organizing Food Focus Thailand Roadmap, we also organized seminar & conferences that definitely meet the partners' needs."
->
+<BaseLayout title={`${pageTitle} ${currentYear}`} description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Food Focus Thailand Roadmap is the edutainment seminar which broaden the knowledge in Food & Beverage Industry. Let's inspire your innovation thoughts and share the valuable experience among technology users and technology providers.">
   <Header client:load slot="header" />
 
   <Container class="py-8">

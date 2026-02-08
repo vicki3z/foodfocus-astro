@@ -9,8 +9,8 @@ import { YearSelector } from "../../../components/ui/YearSelector";
 import { fetchGraphQL } from "../../../lib/graphql";
 import { GET_ROADSHOWS, GET_EVENT_YEARS, GET_PAGE_BY_SLUG } from "../../../lib/queries";
 
-const pageTitle = "Roadshows";
-const pageSlug = "roadshows";
+const pageTitle = "Roadshow";
+const pageSlug = "roadshow";
 
 export async function getStaticPaths() {
   const [yearsData, pageData] = await Promise.all([

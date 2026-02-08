@@ -15,7 +15,7 @@ import {
   GET_EXHIBITION_PAGE,
 } from "../../../../lib/queries";
 
-const pageTitle = "Exhibition";
+const pageTitle = "Exhibitions";
 const pageSlug = "exhibitions";
 
 // Available months
@@ -130,7 +130,7 @@ const monthName = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
     <Breadcrumb items={breadcrumbs} class="mb-6" />
 
     <!-- Page Title -->
-    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-4 uppercase">
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-4 capitalize">
       {pageTitle}
     </h1>
 

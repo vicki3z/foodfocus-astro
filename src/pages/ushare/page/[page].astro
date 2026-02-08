@@ -9,7 +9,7 @@ import Pagination from '../../../components/ui/Pagination.astro';
 import { fetchAllPaginated } from '../../../lib/graphql';
 import { GET_POSTS_BY_CATEGORY } from '../../../lib/queries';
 
-const pageTitle = 'Ushare';
+const pageTitle = 'U Share. V Care.';
 const categorySlug = 'ushare';
 
 export async function getStaticPaths() {
@@ -55,13 +55,13 @@ const articles = posts.map((post: any) => ({
   slug: post.slug,
   image: post.featuredImage?.node?.sourceUrl,
   imageAlt: post.featuredImage?.node?.altText || '',
-  category: post.categories?.nodes?.[0]?.name || pageTitle,
+  category: post.categories?.nodes?.[0]?.name || 'Ushare',
 }));
 
 const breadcrumbs = [{ label: pageTitle, href: categorySlug }];
 ---
 
-<BaseLayout title={`Activities - Page ${currentPage}`} description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, discover more about the no. 1 leading industry-focused magazine for food & beverage from Food Focus Thailand">
+<BaseLayout title={`U Share. V Care. - Page ${currentPage}`} description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, discover more about the no. 1 leading industry-focused magazine for food & beverage from Food Focus Thailand">
   <Header client:load slot="header" />
 
   <Container class="py-8">
@@ -70,7 +70,7 @@ const breadcrumbs = [{ label: pageTitle, href: categorySlug }];
 
     <!-- Page Title -->
     <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-8">
-      {pageTitle}
+      U Share. V Care.
     </h1>
 
     <!-- Articles Grid -->

@@ -30,11 +30,11 @@ const navItems: NavItem[] = [
     label: "Events",
     href: "/events",
     children: [
-      { label: "Roadmaps", href: `/roadmaps`, description: "Industry roadmaps" },
+      { label: "Roadmap", href: `/roadmap`, description: "Industry roadmap" },
       {
-        label: "Roadshows",
-        href: `/roadshows`,
-        description: "Upcoming roadshows",
+        label: "Roadshow",
+        href: `/roadshow`,
+        description: "Upcoming roadshow",
       },
       {
         label: "Proseries",
@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
       },
       {
         label: "Exclusive Events",
-        href: `/seminars`,
+        href: `/exclusive-events`,
         description: "Exclusive events",
       },
       {
@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
   },
   { label: "Services",
     children: [
-      { label: "Contact Publication", href: "/services/contact-publication", description: "Contact Publication" },
+      { label: "Contract Publication", href: "/services/contract-publication", description: "Contract Publication" },
       { label: "Anniversary & Annual Report", href: "/services/annual-report", description: "Anniversary & Annual Report" },
       { label: "Company Profile & Product Catalogue", href: "/services/product-catalogue", description: "Company Profile & Product Catalogue" },
       { label: "Event Organizer", href: "/services/event-organizer", description: "Event Organizer" },

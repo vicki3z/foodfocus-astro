@@ -17,10 +17,10 @@ const availableYears = (yearsData?.eventYears?.nodes || [])
 
 // Get the latest year or default to current year
 const latestYear = availableYears[0] || new Date().getFullYear();
-const redirectUrl = `${baseUrl}roadshows/${latestYear}`;
+const redirectUrl = `${baseUrl}roadmap/${latestYear}`;
 ---
 
-<BaseLayout title="Roadshows" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Being a part of the sustainable success of Thai Food & Beverage Industry, Food Focus Thailand has organized “Food Focus Thailand Roadshow” to provide knowledge to Food & Beverage entrepreneurs located in major cities in Thailand.">
+<BaseLayout title="Roadmap" description="Dedicated to be the industry-focused platform for Food & Beverage Industry in Thailand, Food Focus Thailand Roadmap is the edutainment seminar which broaden the knowledge in Food & Beverage Industry. Let’s inspire your innovation thoughts and share the valuable experience among technology users and technology providers.">
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${redirectUrl}`} />
     <script is:inline set:html={`window.location.href = ${JSON.stringify(redirectUrl)};`}></script>
@@ -38,7 +38,7 @@ const redirectUrl = `${baseUrl}roadshows/${latestYear}`;
       </div>
       <h1 class="text-2xl font-bold text-[var(--color-text-dark)] mb-2">Redirecting...</h1>
       <p class="text-[var(--color-text-muted)]">
-        Taking you to <a href={redirectUrl} class="text-[var(--color-primary)] hover:underline">Roadshows {latestYear}</a>
+        Taking you to <a href={redirectUrl} class="text-[var(--color-primary)] hover:underline">Roadmaps {latestYear}</a>
       </p>
     </div>
   </Container>
