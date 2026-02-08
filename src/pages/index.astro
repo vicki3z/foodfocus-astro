@@ -79,7 +79,7 @@ const pageDescription = "Discover more about the no. 1 leading industry-focused 
       </div>
     </div>
 
-    <script>
+    <script define:vars={{ baseUrl }}>
       document.addEventListener('DOMContentLoaded', () => {
         const button = document.getElementById('enter-button');
         if (button) {
@@ -94,7 +94,7 @@ const pageDescription = "Discover more about the no. 1 leading industry-focused 
             }
 
             // Navigate to home page
-            window.location.href = '/home';
+            window.location.href = `${baseUrl}home`;
           });
         }
       });
