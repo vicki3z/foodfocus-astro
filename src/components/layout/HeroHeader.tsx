@@ -17,9 +17,9 @@ interface Props {
 
 export function HeroHeader({ magazine }: Props) {
   const baseUrl = getBaseUrl();
-  
+
   return (
-    <header 
+    <header
       className="relative overflow-hidden bg-cover"
       style={{ backgroundImage: `url(${baseUrl}images/header-bg.jpg)` }}
     >
@@ -33,9 +33,9 @@ export function HeroHeader({ magazine }: Props) {
       {/* Hero Section - Transparent, shares background with nav */}
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-44 py-12">
-          <div className="flex gap-8 lg:gap-16">
+          <div className="flex flex-col items-center lg:flex-row lg:items-start gap-8 lg:gap-16">
             {/* Left: Magazine Cover */}
-            <div>
+            <div className="flex-shrink-0">
               {magazine ? (
                 <a
                   href={magazine.link}
@@ -61,7 +61,7 @@ export function HeroHeader({ magazine }: Props) {
             </div>
 
             {/* Right: Content */}
-            <div className="flex flex-col gap-6 text-white text-center lg:text-left">
+            <div className="flex flex-col gap-6 text-white text-center lg:text-left w-full lg:w-auto">
               <div>
                 <Tag variant="primary" size="sm">
                   Latest Issue
@@ -72,7 +72,7 @@ export function HeroHeader({ magazine }: Props) {
                 <h1 className="text-3xl lg:text-4xl font-bold mb-4">
                   Food Focus Thailand
                 </h1>
-                <p className="text-lg mb-8 max-w-lg mx-auto lg:mx-0">
+                <p className="text-lg mb-8">
                   The No. 1 industry-focused magazine for food & beverage
                   professionals
                 </p>
@@ -82,18 +82,18 @@ export function HeroHeader({ magazine }: Props) {
               <form
                 action="https://www.foodfocusthailand.com/email.php"
                 method="POST"
-                className="relative"
+                className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0"
               >
                 <input
                   type="email"
                   name="email"
                   placeholder="Email"
                   required
-                  className="py-4 pl-4 pr-28 rounded-lg text-[#2d3319] placeholder:text-gray-400 bg-white focus:outline-none min-w-96"
+                  className="flex-1 px-4 py-3 rounded-lg text-[#2d3319] placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-white/50"
                 />
                 <button
                   type="submit"
-                  className="absolute cursor-pointer px-4 py-2 top-2 right-36  bg-[#3A5F47] hover:bg-[#3A5F47] text-white font-medium rounded-lg transition-colors"
+                  className="px-6 py-3 bg-[#3A5F47] hover:bg-[#2d4a38] text-white font-medium rounded-lg transition-colors"
                 >
                   Subscribe
                 </button>

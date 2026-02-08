@@ -53,27 +53,27 @@ const formattedDate = date
 // Format date range
 const dateRangeText = (() => {
   if (!dateStart || !dateEnd) return null;
-  
+
   const start = new Date(dateStart);
   const end = new Date(dateEnd);
-  
+
   const startDay = start.getDate();
   const endDay = end.getDate();
   const startMonth = start.toLocaleDateString("en-GB", { month: "long", timeZone: "Asia/Bangkok" });
   const endMonth = end.toLocaleDateString("en-GB", { month: "long", timeZone: "Asia/Bangkok" });
   const startYear = start.getFullYear();
   const endYear = end.getFullYear();
-  
+
   // Same month and year
   if (start.getMonth() === end.getMonth() && startYear === endYear) {
     return `${startDay}-${endDay} ${startMonth} ${startYear}`;
   }
-  
+
   // Different months but same year
   if (startYear === endYear) {
     return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${startYear}`;
   }
-  
+
   // Different years
   return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
 })();
@@ -113,7 +113,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
         <h3 class="font-semibold text-lg text-[var(--color-text-dark)] line-clamp-2 mb-3 group-hover:text-[var(--color-primary)] transition-colors">
           {title}
         </h3>
-        
+
         {/* Location */}
         {location && (
           <div class="flex items-start gap-2 mb-2 text-sm text-[var(--color-text-dark)]">
@@ -132,7 +132,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
             <span class="font-medium">{location}</span>
           </div>
         )}
-        
+
         {/* Date Range */}
         {dateRangeText && (
           <div class="flex items-start gap-2 mb-2 text-sm text-[var(--color-text-dark)]">
@@ -151,7 +151,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
             <span class="font-medium">{dateRangeText}</span>
           </div>
         )}
-        
+
         {/* Website */}
         {website && (
           <div class="flex items-start gap-2 mb-2 text-sm text-[var(--color-text-dark)]">
@@ -177,7 +177,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
             </a>
           </div>
         )}
-        
+
         {/* Tel */}
         {tel && (
           <div class="flex items-start gap-2 mb-2 text-sm text-[var(--color-text-dark)]">
@@ -196,7 +196,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
             <span class="font-medium">{tel}</span>
           </div>
         )}
-        
+
         {/* Email */}
         {email && (
           <div class="flex items-start gap-2 mb-2 text-sm text-[var(--color-text-dark)]">
@@ -217,7 +217,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
             </a>
           </div>
         )}
-        
+
         {cleanExcerpt && (
           <p class="text-sm text-[var(--color-text-muted)] line-clamp-3 mb-2 tracking-wide">
             {cleanExcerpt}
@@ -234,11 +234,11 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
     <Comp
       href={linkUrl}
       class:list={[
-        "group flex gap-4 bg-white rounded-lg overflow-hidden p-4",
+        "group flex flex-col md:flex-row gap-4 bg-white rounded-lg overflow-hidden p-4",
         className,
       ]}
     >
-      <div class="flex-shrink-0 w-52 overflow-hidden rounded-lg">
+      <div class="w-full md:w-52 flex-shrink-0 overflow-hidden rounded-lg aspect-[16/10] md:aspect-auto">
         <img
           src={articleImageSrc}
           alt={imageAlt || title}
@@ -247,11 +247,13 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
         />
       </div>
       <div class="flex flex-col flex-1 p-2 gap-3">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col justify-between items-starts lg:flex-row lg:items-center gap-2">
           {category && (
-            <Tag variant="primary" size="sm">
-              {category}
-            </Tag>
+            <div>
+              <Tag variant="primary" size="sm">
+                {category}
+              </Tag>
+            </div>
           )}
           {formattedDate && !dateRangeText && (
             <time
@@ -280,7 +282,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
           <h3 class="font-semibold text-sm text-[var(--color-text-dark)] line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors">
             {title}
           </h3>
-          
+
           {/* Location */}
           {location && (
             <div class="flex items-center gap-1.5 text-xs text-[var(--color-text-dark)]">
@@ -299,7 +301,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
               <span>{location}</span>
             </div>
           )}
-          
+
           {/* Date Range */}
           {dateRangeText && (
             <div class="flex items-center gap-1.5 text-xs text-[var(--color-text-dark)]">
@@ -318,7 +320,7 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
               <span>{dateRangeText}</span>
             </div>
           )}
-          
+
           {cleanExcerpt && (
             <p class="text-sm text-[var(--color-text-muted)] line-clamp-3 mb-2 tracking-wide">
               {cleanExcerpt}

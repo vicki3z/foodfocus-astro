@@ -41,7 +41,7 @@ export function MediaPartnerSlider({
   }
 
   return (
-    <div className={`relative px-16 ${className}`}>
+    <div className={`relative px-4 sm:px-8 lg:px-16 ${className}`}>
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-24">
           {partners.map((partner, index) => (

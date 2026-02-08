@@ -79,7 +79,7 @@ export function Navigation() {
     <>
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
-        <a href={baseUrl} className="shrink-0 flex gap-2">
+        <a href={`${baseUrl}home`} className="shrink-0 flex gap-2">
           <img
             src={`${baseUrl}images/be-media-logo.png`}
             alt="Bemedia Focus logo"

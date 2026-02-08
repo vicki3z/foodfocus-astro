@@ -25,11 +25,11 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${googleMap
       <h1 class="text-4xl font-bold text-[var(--color-text-dark)] mb-4">
         Contact Us
       </h1>
-      <div class="flex gap-16 mb-16 justify-center">
+      <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-16">
         <img class="w-full max-w-[555px]" src="https://www.foodfocusthailand.com/images/upload/maps.jpg" alt="Be Media Focus (Thailand) Co., Ltd. Map" />
-        <iframe width="555" height="438" src={mapsEmbedUrl} frameborder="0" allowfullscreen></iframe>
+        <iframe class="w-full max-w-[555px]" width="555" height="438" src={mapsEmbedUrl} frameborder="0" allowfullscreen></iframe>
       </div>
-      <div class="px-10 flex gap-10 justify-between">
+      <div class="px-4 md:px-10 flex flex-col md:flex-row flex-wrap gap-8 md:gap-10 md:justify-between">
         <div class="flex flex-col gap-6 items-center">
           <img src="https://www.foodfocusthailand.com/images/icons/ic-location.png" alt="Map icon" class="max-w-[64px]" />
           <div class="flex flex-col gap-4 text-center">

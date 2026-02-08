@@ -20,7 +20,7 @@ const { advertisements } = Astro.props;
     <p class="text-center text-sm text-[var(--color-text-muted)] mb-4">
       - Advertisement -
     </p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mt-4 place-items-center">
       {
         advertisements.slice(0, 3).map((ad) =>
           ad.link ? (
@@ -28,21 +28,21 @@ const { advertisements } = Astro.props;
               href={ad.link}
               target="_blank"
               rel="noopener noreferrer"
-              class="block overflow-hidden hover:opacity-90 transition-opacity"
+              class="block overflow-hidden hover:opacity-90 transition-opacity w-full max-w-[350px]"
             >
               <img
                 src={ad.image}
                 alt={ad.imageAlt || ad.title}
-                class="w-87.5 h-auto"
+                class="w-full h-auto"
                 loading="lazy"
               />
             </a>
           ) : (
-            <div class="overflow-hidden">
+            <div class="overflow-hidden w-full max-w-[350px]">
               <img
                 src={ad.image}
                 alt={ad.imageAlt || ad.title}
-                class="w-87.5 h-auto"
+                class="w-full h-auto"
                 loading="lazy"
               />
             </div>
