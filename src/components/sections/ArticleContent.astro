@@ -1,10 +1,13 @@
 ---
+import { normalizeContentUrls } from "../../lib/utils";
+
 interface Props {
   content: string;
   class?: string;
 }
 
 const { content, class: className = "" } = Astro.props;
+const safeContent = normalizeContentUrls(content);
 ---
 
 <article
@@ -22,7 +25,7 @@ const { content, class: className = "" } = Astro.props;
     "gap-5",
     className,
   ]}
-  set:html={content}
+  set:html={safeContent}
 />
 
 <style is:global>

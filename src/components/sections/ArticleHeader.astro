@@ -20,10 +20,11 @@ interface Props {
 const { title, titleTh, date, breadcrumbs, category } = Astro.props;
 
 const formattedDate = date
-  ? new Date(date).toLocaleDateString("th-TH", {
+  ? new Date(date).toLocaleDateString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "Asia/Bangkok",
     })
   : null;
 ---
