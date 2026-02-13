@@ -1,8 +1,29 @@
 name: Deploy Astro site to FTP
 
+# WordPress Webhook Setup:
+# 1. Create a GitHub Personal Access Token (PAT) with 'repo' scope
+# 2. In WordPress, configure webhook to POST to:
+#    URL: https://api.github.com/repos/OWNER/REPO/dispatches
+#    Headers: Authorization: token YOUR_GITHUB_PAT
+#    Body: {"event_type": "wordpress_publish"}
+# 3. Trigger on post publish/update events
+
 on:
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  # Trigger via WordPress webhook (repository_dispatch event)
+  repository_dispatch:
+    types: [wordpress_publish, wordpress_update]
+
+# Concurrency control: Cancel in-progress runs when a new deployment is triggered
+# This ensures only the latest content gets deployed, preventing conflicts
+concurrency:
+  group: "deploy-ftp"
+  cancel-in-progress: true
 
 env:
   BUILD_PATH: "."
@@ -13,6 +34,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     steps:
+      - name: Log deployment trigger
+        run: |
+          echo "Deployment triggered by: ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
+            echo "Webhook action type: ${{ github.event.action }}"
+          fi
+          echo "Workflow run: ${{ github.run_id }}"
+          echo "Commit: ${{ github.sha }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
