@@ -5,6 +5,17 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Ensure root domain serves index.html (Astro landing page)
+DirectoryIndex index.html
+
+# Handle trailing slashes - redirect to non-trailing version
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [R=301,L]
+
+# Custom 404 error page (Astro generates 404.html from src/pages/404.astro)
+ErrorDocument 404 /404.html
+
 # Gzip Compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
@@ -29,3 +40,5 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
 </IfModule>
+
+php_value memory_limit 256M
