@@ -124,9 +124,9 @@ const advertisements = (advertisementData?.posts?.nodes || []).map(
 const roadmapItems = (roadmapsData?.roadmaps?.nodes || [])
   .map((item: any) => ({
     title: item.title,
-    category: "Roadmaps",
+    category: "Roadmap",
     excerpt: item.postSummary?.summary || "",
-    slug: `roadmaps/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    slug: `roadmap/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
     image: item.featuredImage?.node?.sourceUrl,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
@@ -152,8 +152,8 @@ const roadshowItems = (roadshowsData?.roadshows?.nodes || [])
   .map((item: any) => ({
     title: item.title,
     excerpt: item.postSummary?.summary || "",
-    category: "Roadshows",
-    slug: `roadshows/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    category: "Roadshow",
+    slug: `roadshow/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
     image: item.featuredImage?.node?.sourceUrl,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
@@ -165,7 +165,7 @@ const seminarItems = (seminarsData?.seminars?.nodes || [])
     title: item.title,
     excerpt: item.postSummary?.summary || "",
     category: "Seminars",
-    slug: `seminars/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
+    slug: `exclusive-events/${item.eventYears?.nodes[0]?.slug}/${item.slug}`,
     image: item.featuredImage?.node?.sourceUrl,
     imageAlt: item.featuredImage?.node?.altText || "",
     link: item.link,
