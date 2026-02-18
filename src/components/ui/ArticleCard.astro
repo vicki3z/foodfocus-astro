@@ -96,11 +96,11 @@ const linkUrl = href ? `${baseUrl}${href}` : undefined;
         className,
       ]}
     >
-      <div class="aspect-[16/10] overflow-hidden">
+      <div class="overflow-hidden">
         <img
           src={articleImageSrc}
           alt={imageAlt || title}
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-md"
+          class="m-auto group-hover:scale-105 transition-transform duration-300 rounded-md"
           loading="lazy"
         />
       </div>

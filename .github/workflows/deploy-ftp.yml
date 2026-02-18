@@ -79,12 +79,13 @@ jobs:
           PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT || '21' }}
+          log-level: 'verbose'
+          port: 2002
           local-dir: ./dist/
           server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
           dangerous-clean-slate: false

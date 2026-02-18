@@ -24,7 +24,7 @@ export async function getStaticPaths() {
 
 const { slug, year } = Astro.params;
 const { item, allItems } = Astro.props as any;
-const cptSlug = "roadshows";
+const cptSlug = "roadshow";
 const cptLabel = "Roadshow";
 
 if (!item) {
@@ -33,7 +33,6 @@ if (!item) {
 
 const otherItems = allItems
   .filter((i: any) => i.slug !== slug)
-  .sort(() => Math.random() - 0.5)
   .slice(0, 3);
 
 const otherArticles = otherItems.map((i: any) => ({
