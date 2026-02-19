@@ -33,7 +33,7 @@ jobs:
     name: Build and Deploy to FTP
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - name: Log deployment trigger
         run: |
