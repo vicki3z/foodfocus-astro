@@ -29,11 +29,10 @@ env:
   BUILD_PATH: "."
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy to FTP
+  build:
+    name: Build
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 50
     steps:
       - name: Log deployment trigger
         run: |
@@ -47,15 +46,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          echo "manager=pnpm" >> $GITHUB_OUTPUT
-          echo "command=install" >> $GITHUB_OUTPUT
-          echo "runner=pnpm" >> $GITHUB_OUTPUT
-          echo "lockfile=pnpm-lock.yaml" >> $GITHUB_OUTPUT
-          exit 0
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -65,48 +55,259 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ env.BUILD_PATH }}/${{ steps.detect-package-manager.outputs.lockfile }}
+          cache: pnpm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        run: pnpm install
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Build with Astro
-        run: ${{ steps.detect-package-manager.outputs.runner }} astro build
+        run: pnpm astro build
         working-directory: ${{ env.BUILD_PATH }}
         env:
           WP_GRAPHQL_URL: ${{ vars.WP_GRAPHQL_URL }}
           PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
 
-      # - name: Deploy to FTP
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-      #   with:
-      #     server: ${{ secrets.FTP_SERVER }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     log-level: verbose
-      #     protocol: ftps
-      #     port: 2002
-      #     timeout: 1500000
-      #     local-dir: ./dist/
-      #     server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
-      #     exclude: |
-      #       **/.git*
-      #       **/.git*/**
-      #       **/node_modules/**
-      #       **/.DS_Store
-      - name: Deploy to FTP
-        uses: sand4rt/ftp-deployer@v1.8
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          sftp: false # optional
-          host: ${{ secrets.FTP_SERVER }}
-          port: 2002 # optional, default is: 21
-          username: ${{ secrets.FTP_USERNAME }} # FTP username
-          password: ${{ secrets.FTP_PASSWORD }} # FTP password
-          remote_folder: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/ # optional, remote path of your FTP server
-          local_folder: dist # optional, local path, default is: dist
-          cleanup: false # optional, remove existing files inside FTP remote folder
-          include: '[]' # optional, e.g. '['dist']'
-          exclude: '[]' # optional, e.g. '['node_modules/**', '.git/**', '*.env']'
-          passive: true # optional
+          name: dist
+          path: ./dist/
+          retention-days: 1
+
+  deploy-homepage:
+    name: Deploy - Homepage & Resources
+    needs: build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            **/about-us/**
+            **/contact-us/**
+            **/events/**
+            **/exclusive-events/**
+            **/exhibitions/**
+            **/magazines/**
+            **/news/**
+            **/proseries/**
+            **/roadmap/**
+            **/roadshow/**
+            **/services/**
+            **/ushare/**
+            **/whats-in/**
+
+  deploy-whats-in:
+    name: Deploy - Whats In Articles
+    needs: build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/whats-in/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/whats-in/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+
+  deploy-news:
+    name: Deploy - News Articles
+    needs: [build, deploy-whats-in]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/news/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/news/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+
+  deploy-ushare:
+    name: Deploy - Ushare Articles
+    needs: [build, deploy-whats-in, deploy-news]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/ushare/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/ushare/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+
+  deploy-events-magazines:
+    name: Deploy - Events & Magazines
+    needs: build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            **/about-us/**
+            **/contact-us/**
+            **/_astro/**
+            **/home/**
+            **/fonts/**
+            **/images/**
+            **/news/**
+            **/proseries/**
+            **/roadmap/**
+            **/roadshow/**
+            **/ushare/**
+            **/whats-in/**
+            **/services/**
+            **/index.html
+            **/404.html
+            **/.htaccess
+            **/favicon.ico
+            **/sitemap-*.xml
+
+  deploy-static-pages:
+    name: Deploy - Static Pages
+    needs: [build, deploy-homepage]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            **/_astro/**
+            **/home/**
+            **/fonts/**
+            **/images/**
+            **/events/**
+            **/exclusive-events/**
+            **/exhibitions/**
+            **/magazines/**
+            **/news/**
+            **/proseries/**
+            **/roadmap/**
+            **/roadshow/**
+            **/ushare/**
+            **/whats-in/**
+            **/index.html
+            **/404.html
+            **/.htaccess
+            **/favicon.ico
+            **/sitemap-*.xml
