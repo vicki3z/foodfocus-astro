@@ -6,8 +6,8 @@ import Container from "../../components/layout/Container.astro";
 import ArticleHeader from "../../components/sections/ArticleHeader.astro";
 import ArticleContent from "../../components/sections/ArticleContent.astro";
 import OtherArticles from "../../components/sections/OtherArticles.astro";
-import { fetchGraphQL, fetchAllPaginated } from "../../lib/graphql";
-import { GET_POST_BY_SLUG, GET_POSTS_BY_CATEGORY } from "../../lib/queries";
+import { fetchAllPaginated } from "../../lib/graphql";
+import { GET_POSTS_BY_CATEGORY } from "../../lib/queries";
 
 export async function getStaticPaths() {
   const posts = await fetchAllPaginated<any>(
@@ -20,34 +20,27 @@ export async function getStaticPaths() {
     })
   );
 
+  const sideBarPosts: any[] = posts
+    .filter((p: any) => p.slug !== slug)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
   return posts.map((post: any) => ({
     params: { slug: post.slug },
-    props: { allPosts: posts },
+    props: { post, sideBarPosts },
   }));
 }
 
 const { slug } = Astro.params;
-const { allPosts } = Astro.props as any;
+const { post, sideBarPosts } = Astro.props as any;
 const categorySlug = "whats-in";
 const categoryLabel = "What's In";
-
-// Fetch the post content (not available in list query)
-const postData = await fetchGraphQL<any>(GET_POST_BY_SLUG, { slug }).catch(
-  () => null,
-);
-const post = postData?.post;
 
 if (!post) {
   return Astro.redirect("/404");
 }
 
-// Use allPosts from props for sidebar instead of refetching
-const otherPosts = allPosts
-  .filter((p: any) => p.slug !== slug)
-  .sort(() => Math.random() - 0.5)
-  .slice(0, 3);
-
-const otherArticles = otherPosts.map((p: any) => ({
+const otherArticles = sideBarPosts.map((p: any) => ({
   title: p.title,
   image: p.featuredImage?.node?.sourceUrl,
   imageAlt: p.featuredImage?.node?.altText || "",

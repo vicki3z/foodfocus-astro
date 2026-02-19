@@ -14,7 +14,7 @@ export default defineConfig({
 
   build: {
     inlineStylesheets: "auto",
-    concurrency: 4,
+    concurrency: 6,
 
   },
 
