@@ -315,7 +315,7 @@ jobs:
 
   deploy-news-1:
     name: Deploy - News Articles (Batch 1/3, folders 1-600)
-    needs: [build, deploy-whats-in-5]
+    needs: [build, deploy-whats-in-4]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -356,7 +356,7 @@ jobs:
 
   deploy-news-2:
     name: Deploy - News Articles (Batch 2/3, folders 601-1200)
-    needs: [build, deploy-whats-in-5]
+    needs: [build, deploy-whats-in-4]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -432,7 +432,7 @@ jobs:
 
   deploy-ushare:
     name: Deploy - Ushare Articles
-    needs: [build, deploy-whats-in-5, deploy-news-3]
+    needs: [build, deploy-news-2]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
