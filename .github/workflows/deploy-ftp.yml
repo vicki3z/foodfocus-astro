@@ -33,6 +33,7 @@ jobs:
     name: Build and Deploy to FTP
     runs-on: ubuntu-latest
     environment: github-pages
+    timeout-minutes: 30
     steps:
       - name: Log deployment trigger
         run: |
@@ -84,7 +85,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          log-level: 'verbose'
+          log-level: standard
           protocol: ftps
           port: 2002
           timeout: 1500000
