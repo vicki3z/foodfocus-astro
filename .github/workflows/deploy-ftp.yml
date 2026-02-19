@@ -85,13 +85,12 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          log-level: standard
+          log-level: verbose
           protocol: ftps
           port: 2002
           timeout: 1500000
           local-dir: ./dist/
           server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
-          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**
@@ -152,26 +151,9 @@ jobs:
             **/exhibitions/2023/**
             **/exhibitions/2024/**
             **/exhibitions/2025/**
+            **/news/**
             **/about-us/**
             **/contact-us/**
             **/services/**
-            **/news/*apr22/**
-            **/news/2020-*/**
-            **/news/*-2020/**
-            **/news/*-2022/**
-            **/news/*-2021/**
-            **/news/*-2023/**
-            **/news/*-2024/**
-            **/news/*-2025/**
-            **/news/*2023/**
-            **/news/*2022*/**
-            **/ushare/*-2017/**
-            **/ushare/*-2018/**
-            **/ushare/*-2019/**
-            **/ushare/*-2020/**
-            **/ushare/*-2021/**
-            **/ushare/*-2022/**
-            **/ushare/*-2023/**
-            **/ushare/*-2024/**
-            **/ushare/*-2025/**
+            **/ushare/**/
 
