@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Navigation } from "./Navigation";
 import { Tag } from "../ui/Tag";
 import { getBaseUrl } from "../../lib/utils";
@@ -17,6 +18,29 @@ interface Props {
 
 export function HeroHeader({ magazine }: Props) {
   const baseUrl = getBaseUrl();
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      const res = await fetch("https://www.foodfocusthailand.com/email.php", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <header
@@ -79,25 +103,40 @@ export function HeroHeader({ magazine }: Props) {
               </div>
 
               {/* Email Subscription Form */}
-              <form
-                action="https://www.foodfocusthailand.com/email.php"
-                method="POST"
-                className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0"
-              >
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  required
-                  className="flex-1 px-4 py-3 rounded-lg text-[#2d3319] placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-white/50"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-[#3A5F47] hover:bg-[#2d4a38] text-white font-medium rounded-lg transition-colors"
+              {status === "success" ? (
+                <p className="text-white/90 bg-white/10 rounded-lg px-4 py-3 max-w-md mx-auto lg:mx-0">
+                  Thanks for subscribing!
+                </p>
+              ) : (
+                <form
+                  onSubmit={handleSubmit}
+                  className="flex flex-col gap-3 max-w-md mx-auto lg:mx-0"
                 >
-                  Subscribe
-                </button>
-              </form>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="email"
+                      name="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      required
+                      className="flex-1 px-4 py-3 rounded-lg text-[#2d3319] placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={status === "loading"}
+                      className="px-6 py-3 bg-[#3A5F47] hover:bg-[#2d4a38] disabled:opacity-60 text-white font-medium rounded-lg transition-colors"
+                    >
+                      {status === "loading" ? "Subscribing…" : "Subscribe"}
+                    </button>
+                  </div>
+                  {status === "error" && (
+                    <p className="text-red-300 text-sm">
+                      Something went wrong. Please try again.
+                    </p>
+                  )}
+                </form>
+              )}
             </div>
           </div>
         </div>
