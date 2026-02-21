@@ -76,12 +76,11 @@ jobs:
           path: ./dist/
           retention-days: 1
 
-  deploy-homepage:
-    name: Deploy - Homepage & Resources
+  deploy-root:
+    name: Deploy - Homepage, Resources & Other Static Pages
     needs: build
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -106,26 +105,20 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.DS_Store
-            **/about-us/**
-            **/contact-us/**
-            **/events/**
             **/exclusive-events/**
             **/exhibitions/**
-            **/magazines/**
             **/news/**
             **/proseries/**
             **/roadmap/**
             **/roadshow/**
-            **/services/**
             **/ushare/**
             **/whats-in/**
 
   deploy-whats-in:
-    name: Deploy - Whats In Articles (Batch 1/8, folders 1-400)
+    name: Deploy - Whats In Articles
     needs: build
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -152,11 +145,10 @@ jobs:
             **/.DS_Store
 
   deploy-news:
-    name: Deploy - News Articles (Batch 1/4, folders 1-400)
+    name: Deploy - News Articles
     needs: build
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -187,7 +179,6 @@ jobs:
     needs: [build, deploy-news]
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -213,12 +204,11 @@ jobs:
             **/node_modules/**
             **/.DS_Store
 
-  deploy-events-magazines:
-    name: Deploy - Latest Events & Magazines
-    needs: build
+  deploy-roadmap:
+    name: Deploy - Roadmap
+    needs: [build, deploy-root]
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -236,90 +226,19 @@ jobs:
           protocol: ftps
           port: 2002
           timeout: 1500000
-          local-dir: ./dist/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
+          local-dir: ./dist/roadmap/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/roadmap/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/.DS_Store
-            **/about-us/**
-            **/contact-us/**
-            **/_astro/**
-            **/home/**
-            **/fonts/**
-            **/images/**
-            **/news/**
-            **/exclusive-events/2015/**
-            **/exclusive-events/2016/**
-            **/exclusive-events/2017/**
-            **/exclusive-events/2018/**
-            **/exclusive-events/2019/**
-            **/exclusive-events/2020/**
-            **/exclusive-events/2021/**
-            **/exclusive-events/2022/**
-            **/exclusive-events/2023/**
-            **/exclusive-events/2024/**
-            **/exclusive-events/2025/**
-            **/exhibitions/2015/**
-            **/exhibitions/2016/**
-            **/exhibitions/2017/**
-            **/exhibitions/2018/**
-            **/exhibitions/2019/**
-            **/exhibitions/2020/**
-            **/exhibitions/2021/**
-            **/exhibitions/2022/**
-            **/exhibitions/2023/**
-            **/exhibitions/2024/**
-            **/exhibitions/2025/**
-            **/proseries/2015/**
-            **/proseries/2016/**
-            **/proseries/2017/**
-            **/proseries/2018/**
-            **/proseries/2019/**
-            **/proseries/2020/**
-            **/proseries/2021/**
-            **/proseries/2022/**
-            **/proseries/2023/**
-            **/proseries/2024/**
-            **/proseries/2025/**
-            **/roadmap/2015/**
-            **/roadmap/2016/**
-            **/roadmap/2017/**
-            **/roadmap/2018/**
-            **/roadmap/2019/**
-            **/roadmap/2020/**
-            **/roadmap/2021/**
-            **/roadmap/2022/**
-            **/roadmap/2023/**
-            **/roadmap/2024/**
-            **/roadmap/2025/**
-            **/roadshow/2015/**
-            **/roadshow/2016/**
-            **/roadshow/2017/**
-            **/roadshow/2018/**
-            **/roadshow/2019/**
-            **/roadshow/2020/**
-            **/roadshow/2021/**
-            **/roadshow/2022/**
-            **/roadshow/2023/**
-            **/roadshow/2024/**
-            **/roadshow/2025/**
-            **/ushare/**
-            **/whats-in/**
-            **/services/**
-            **/index.html
-            **/404.html
-            **/.htaccess
-            **/favicon.ico
-            **/sitemap-*.xml
 
-  deploy-static-pages:
-    name: Deploy - Static Pages
-    needs: [build, deploy-homepage]
+  deploy-roadshow:
+    name: Deploy - Roadshow
+    needs: [build, deploy-root, deploy-roadmap]
     runs-on: ubuntu-latest
     environment: github-pages
-    timeout-minutes: 20
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -337,29 +256,101 @@ jobs:
           protocol: ftps
           port: 2002
           timeout: 1500000
-          local-dir: ./dist/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/
+          local-dir: ./dist/roadshow/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/roadshow/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/.DS_Store
-            **/_astro/**
-            **/home/**
-            **/fonts/**
-            **/images/**
-            **/events/**
-            **/exclusive-events/**
-            **/exhibitions/**
-            **/magazines/**
-            **/news/**
-            **/proseries/**
-            **/roadmap/**
-            **/roadshow/**
-            **/ushare/**
-            **/whats-in/**
-            **/index.html
-            **/404.html
-            **/.htaccess
-            **/favicon.ico
-            **/sitemap-*.xml
+
+
+  deploy-proseries:
+    name: Deploy - Proseries
+    needs: [build, deploy-root, deploy-roadmap]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/proseries/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/proseries/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+
+  deploy-exclusive-events:
+    name: Deploy - Exclusive Events
+    needs: [build, deploy-proseries]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/exclusive-events/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/exclusive-events/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+
+  deploy-exhibitions:
+    name: Deploy - Exhibitions
+    needs: [build, deploy-proseries]
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist/
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          log-level: verbose
+          protocol: ftps
+          port: 2002
+          timeout: 1500000
+          local-dir: ./dist/exhibitions/
+          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/exhibitions/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
