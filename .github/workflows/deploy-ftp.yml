@@ -13,6 +13,9 @@ on:
   push:
     branches:
       - main
+  # Rebuild every 3 hours starting at 10am Bangkok time (UTC+7)
+  schedule:
+    - cron: '0 */3 * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   # Trigger via WordPress webhook (repository_dispatch event)
