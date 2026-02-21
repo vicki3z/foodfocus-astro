@@ -77,7 +77,7 @@ jobs:
           retention-days: 1
 
   deploy-root:
-    name: Deploy - Homepage, Resources & Other Static Pages
+    name: Deploy - Homepage, resources, ushare, all events, magazines, and other static pages
     needs: build
     runs-on: ubuntu-latest
     environment: github-pages
@@ -105,13 +105,7 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.DS_Store
-            **/exclusive-events/**
-            **/exhibitions/**
             **/news/**
-            **/proseries/**
-            **/roadmap/**
-            **/roadshow/**
-            **/ushare/**
             **/whats-in/**
 
   deploy-whats-in:
@@ -168,187 +162,6 @@ jobs:
           timeout: 1500000
           local-dir: ./dist/news/
           server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/news/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-  deploy-ushare:
-    name: Deploy - Ushare Articles
-    needs: [build, deploy-news]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/ushare/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/ushare/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-  deploy-roadmap:
-    name: Deploy - Roadmap
-    needs: [build, deploy-root]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/roadmap/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/roadmap/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-  deploy-roadshow:
-    name: Deploy - Roadshow
-    needs: [build, deploy-root, deploy-roadmap]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/roadshow/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/roadshow/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-
-  deploy-proseries:
-    name: Deploy - Proseries
-    needs: [build, deploy-root, deploy-roadmap]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/proseries/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/proseries/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-  deploy-exclusive-events:
-    name: Deploy - Exclusive Events
-    needs: [build, deploy-proseries]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/exclusive-events/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/exclusive-events/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-
-  deploy-exhibitions:
-    name: Deploy - Exhibitions
-    needs: [build, deploy-proseries]
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: ./dist/
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          log-level: verbose
-          protocol: ftps
-          port: 2002
-          timeout: 1500000
-          local-dir: ./dist/exhibitions/
-          server-dir: ./domains/${{ secrets.FTP_DOMAIN }}/public_html/exhibitions/
           exclude: |
             **/.git*
             **/.git*/**
