@@ -163,7 +163,7 @@ jobs:
 
   deploy-whats-in-2:
     name: Deploy - Whats In Articles (Batch 2/8, folders 401-800)
-    needs: build
+    needs: [build, deploy-whats-in-1]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -201,7 +201,7 @@ jobs:
 
   deploy-whats-in-3:
     name: Deploy - Whats In Articles (Batch 3/8, folders 801-1200)
-    needs: [build, deploy-whats-in-1, deploy-whats-in-2]
+    needs: [build, deploy-whats-in-2]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -239,7 +239,7 @@ jobs:
 
   deploy-whats-in-4:
     name: Deploy - Whats In Articles (Batch 4/8, folders 1201-1600)
-    needs: [build, deploy-whats-in-1, deploy-whats-in-2]
+    needs: [build, deploy-whats-in-3]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -277,7 +277,7 @@ jobs:
 
   deploy-whats-in-5:
     name: Deploy - Whats In Articles (Batch 5/8, folders 1601-2000)
-    needs: [build, deploy-whats-in-3, deploy-whats-in-4]
+    needs: [build, deploy-whats-in-4]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -315,7 +315,7 @@ jobs:
 
   deploy-whats-in-6:
     name: Deploy - Whats In Articles (Batch 6/8, folders 2001-2400)
-    needs: [build, deploy-whats-in-3, deploy-whats-in-4]
+    needs: [build, deploy-whats-in-5]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -353,7 +353,7 @@ jobs:
 
   deploy-whats-in-7:
     name: Deploy - Whats In Articles (Batch 7/8, folders 2401-2800)
-    needs: [build, deploy-whats-in-5, deploy-whats-in-6]
+    needs: [build, deploy-whats-in-6]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -391,7 +391,7 @@ jobs:
 
   deploy-whats-in-8:
     name: Deploy - Whats In Articles (Batch 8/8, folders 2801+)
-    needs: [build, deploy-whats-in-5, deploy-whats-in-6]
+    needs: [build, deploy-whats-in-7]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -429,7 +429,7 @@ jobs:
 
   deploy-news-1:
     name: Deploy - News Articles (Batch 1/4, folders 1-400)
-    needs: [build, deploy-whats-in-7, deploy-whats-in-8]
+    needs: build
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -470,7 +470,7 @@ jobs:
 
   deploy-news-2:
     name: Deploy - News Articles (Batch 2/4, folders 401-800)
-    needs: [build, deploy-whats-in-7, deploy-whats-in-8]
+    needs: [build, deploy-news-1]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -508,7 +508,7 @@ jobs:
 
   deploy-news-3:
     name: Deploy - News Articles (Batch 3/4, folders 801-1200)
-    needs: [build, deploy-news-1, deploy-news-2]
+    needs: [build, deploy-news-2]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -546,7 +546,7 @@ jobs:
 
   deploy-news-4:
     name: Deploy - News Articles (Batch 4/4, folders 1201+)
-    needs: [build, deploy-news-1, deploy-news-2]
+    needs: [build, deploy-news-3]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
@@ -584,7 +584,7 @@ jobs:
 
   deploy-ushare:
     name: Deploy - Ushare Articles
-    needs: [build, deploy-news-3, deploy-news-4]
+    needs: [build, deploy-whats-in-1]
     runs-on: ubuntu-latest
     environment: github-pages
     timeout-minutes: 20
