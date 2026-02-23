@@ -25,13 +25,18 @@ export function HeroHeader({ magazine }: Props) {
     e.preventDefault();
     setStatus("loading");
     try {
-      const formData = new FormData();
+      const formData = new URLSearchParams();
       formData.append("email", email);
       const res = await fetch("https://www.foodfocusthailand.com/email.php", {
         method: "POST",
-        body: formData,
+        body: formData.toString(),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
-      if (res.ok) {
+
+      const data = await res.json();
+      if (data.success) {
         setStatus("success");
         setEmail("");
       } else {
