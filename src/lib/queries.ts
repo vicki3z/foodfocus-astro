@@ -907,6 +907,12 @@ export const GET_EVENTS_BY_YEAR_AND_MONTH = gql`
           year
           month
         }
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
       }
     }
   }
