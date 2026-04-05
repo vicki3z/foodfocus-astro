@@ -5,6 +5,7 @@ import Container from "../components/layout/Container.astro";
 import { BannerCarousel } from "../components/sections/BannerCarousel";
 import { fetchGraphQL } from "../lib/graphql";
 import { GET_TOP_BANNERS } from "../lib/queries";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 
 interface Props {
   title: string;
@@ -108,6 +109,7 @@ const topBanners = (topBannersData?.positions?.nodes[0]?.banners?.nodes || []).m
     
     <!-- Additional head content slot -->
     <slot name="head" />
+    <GoogleAnalytics />
   </head>
   <body class="min-h-screen flex flex-col bg-white text-(--color-text-dark)">
     <a
