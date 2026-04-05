@@ -27,7 +27,7 @@ export function HeroHeader({ magazine }: Props) {
     try {
       const formData = new URLSearchParams();
       formData.append("email", email);
-      const res = await fetch("https://www.foodfocusthailand.com/email.php", {
+      const res = await fetch("/email.php", {
         method: "POST",
         body: formData.toString(),
         headers: {
