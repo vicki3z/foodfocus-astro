@@ -37,6 +37,9 @@ export function HeroHeader({ magazine }: Props) {
 
       const data = await res.json();
       if (data.success) {
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "form_submit");
+        }
         setStatus("success");
         setEmail("");
       } else {
