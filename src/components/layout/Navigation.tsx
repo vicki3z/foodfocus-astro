@@ -75,6 +75,24 @@ export function Navigation() {
     return `${baseUrl}${path.slice(1)}`; // Remove leading slash and prepend baseUrl
   };
 
+  const navigateToSearch = (query: string) => {
+    const base = withBase("/search");
+    window.location.href = query
+      ? base + "?query=" + encodeURIComponent(query)
+      : base;
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigateToSearch(searchQuery.trim());
+  };
+
+  const handleMobileSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    navigateToSearch(searchQuery.trim());
+  };
+
   return (
     <>
       <div className="flex items-center justify-between h-16">
@@ -155,7 +173,7 @@ export function Navigation() {
         {/* Right side: Search */}
         <div className="hidden lg:flex items-center gap-4">
           {/* Search Input */}
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
               placeholder="Search articles, news, events..."
@@ -163,20 +181,26 @@ export function Navigation() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-64 pl-4 pr-10 py-2 text-sm bg-white/45 rounded-full text-gray-700 placeholder:text-gray-800/30 focus:outline-none focus:border-white/40 min-w-72"
             />
-            <svg
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black/30"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <button
+              type="submit"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+              aria-label="Search"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+              <svg
+                className="w-4 h-4 text-black/30"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </form>
         </div>
 
         {/* Mobile Menu Button */}
@@ -224,26 +248,34 @@ export function Navigation() {
         <div className="lg:hidden py-4 border-t border-gray-700">
           {/* Mobile Search */}
           <div className="px-3 pb-4">
-            <div className="relative">
+            <form onSubmit={handleMobileSearch} className="relative">
               <input
                 type="text"
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 text-sm bg-white/10 border border-white/20 rounded-full text-white placeholder:text-white/60 focus:outline-none focus:bg-white/20"
               />
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              <button
+                type="submit"
+                className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                aria-label="Search"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
+                <svg
+                  className="w-4 h-4 text-white/60"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </form>
           </div>
 
           <nav className="space-y-1">
