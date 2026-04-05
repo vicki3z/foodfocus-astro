@@ -65,6 +65,7 @@ jobs:
         env:
           WP_GRAPHQL_URL: ${{ vars.WP_GRAPHQL_URL }}
           PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
+          PUBLIC_GA4_MEASUREMENT_ID: ${{ secrets.PUBLIC_GA4_MEASUREMENT_ID }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
