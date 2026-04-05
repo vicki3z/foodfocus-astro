@@ -75,25 +75,22 @@ export function Navigation() {
     return `${baseUrl}${path.slice(1)}`; // Remove leading slash and prepend baseUrl
   };
 
+  const navigateToSearch = (query: string) => {
+    const base = withBase("/search");
+    window.location.href = query
+      ? base + "?query=" + encodeURIComponent(query)
+      : base;
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href =
-        withBase("/search") +
-        "?query=" +
-        encodeURIComponent(searchQuery.trim());
-    }
+    navigateToSearch(searchQuery.trim());
   };
 
   const handleMobileSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      setMobileMenuOpen(false);
-      window.location.href =
-        withBase("/search") +
-        "?query=" +
-        encodeURIComponent(searchQuery.trim());
-    }
+    setMobileMenuOpen(false);
+    navigateToSearch(searchQuery.trim());
   };
 
   return (
@@ -186,7 +183,7 @@ export function Navigation() {
             />
             <button
               type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
               aria-label="Search"
             >
               <svg
@@ -261,7 +258,7 @@ export function Navigation() {
               />
               <button
                 type="submit"
-                className="absolute left-3 top-1/2 -translate-y-1/2"
+                className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer"
                 aria-label="Search"
               >
                 <svg

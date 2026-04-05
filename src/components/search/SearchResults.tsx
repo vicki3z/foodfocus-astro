@@ -17,15 +17,6 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
 }
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Bangkok",
-  });
-}
-
 // --- Sub-components ---
 
 function SearchResultCard({
@@ -38,15 +29,13 @@ function SearchResultCard({
   const url = `${baseUrl}${buildResultUrl(result)}`;
   const image = result.image || `${baseUrl}images/placeholder.png`;
   const excerpt = result.excerpt ? stripHtml(result.excerpt) : "";
-  const formattedDate = result.date ? formatDate(result.date) : "";
-
   return (
     <a href={url} className="group block bg-white rounded-lg overflow-hidden p-4">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden rounded-md aspect-video">
         <img
           src={image}
           alt={result.imageAlt || result.title}
-          className="m-auto group-hover:scale-105 transition-transform duration-300 rounded-md"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
       </div>
@@ -63,14 +52,6 @@ function SearchResultCard({
           <p className="text-sm text-[var(--color-text-muted)] line-clamp-3 mb-2 tracking-wide">
             {excerpt}
           </p>
-        )}
-        {formattedDate && (
-          <time
-            className="text-xs text-[var(--color-text-muted)]"
-            dateTime={result.date}
-          >
-            {formattedDate}
-          </time>
         )}
       </div>
     </a>
@@ -269,26 +250,58 @@ export function SearchResults({ graphqlUrl, baseUrl }: Props) {
     }
   };
 
-  // No query provided
+  // No query provided — show search input + prompt
   if (!query && !loading) {
     return (
-      <div className="text-center py-16">
-        <svg
-          className="mx-auto w-16 h-16 text-gray-300 mb-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <p className="text-lg text-[var(--color-text-muted)]">
-          Enter a search term to find articles, news, and events
-        </p>
+      <div>
+        <form onSubmit={handleRefineSearch} className="mb-8">
+          <div className="relative max-w-xl">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Search articles, news, events..."
+              className="w-full pl-4 pr-12 py-3 text-sm bg-white border border-gray-300 rounded-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]"
+            />
+            <button
+              type="submit"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 cursor-pointer"
+              aria-label="Search"
+            >
+              <svg
+                className="w-5 h-5 text-gray-400 hover:text-[var(--color-primary)] transition-colors"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div className="text-center py-12">
+          <svg
+            className="mx-auto w-16 h-16 text-gray-300 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <p className="text-lg text-[var(--color-text-muted)]">
+            Enter a search term to find articles, news, and events
+          </p>
+        </div>
       </div>
     );
   }
@@ -307,7 +320,7 @@ export function SearchResults({ graphqlUrl, baseUrl }: Props) {
           />
           <button
             type="submit"
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 cursor-pointer"
             aria-label="Search"
           >
             <svg
