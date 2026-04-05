@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Header } from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/layout/Container.astro";
+import Breadcrumb from "../../components/ui/Breadcrumb.astro";
+import { SearchResults } from "../../components/search/SearchResults";
+import { getBaseUrl } from "../../lib/utils";
+
+const baseUrl = getBaseUrl();
+const graphqlUrl = import.meta.env.WP_GRAPHQL_URL;
+const breadcrumbs = [{ label: "Search" }];
+---
+
+<BaseLayout title="Search" description="Search articles, news, events and more on Food Focus Thailand">
+  <Header client:load slot="header" />
+
+  <Container class="py-8">
+    <Breadcrumb items={breadcrumbs} class="mb-6" />
+
+    <h1 class="text-3xl font-bold text-[var(--color-text-dark)] mb-8">
+      Search
+    </h1>
+
+    <SearchResults client:load graphqlUrl={graphqlUrl} baseUrl={baseUrl} />
+  </Container>
+
+  <Footer slot="footer" />
+</BaseLayout>
