@@ -43,9 +43,9 @@ export function MediaPartnerSlider({
   return (
     <div className={`relative px-4 sm:px-8 lg:px-16 ${className}`}>
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-24">
+        <div className="flex -ml-24">
           {partners.map((partner, index) => (
-            <div key={index} className="flex-[0_0_auto] max-w-[100px]">
+            <div key={index} className="flex-[0_0_auto] pl-24">
               {partner.link ? (
                 <a
                   href={partner.link}
