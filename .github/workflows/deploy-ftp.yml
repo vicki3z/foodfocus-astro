@@ -22,7 +22,7 @@ on:
 # This ensures only the latest content gets deployed, preventing conflicts
 concurrency:
   group: "deploy-ftp"
-  cancel-in-progress: true
+  queue: max
 
 env:
   BUILD_PATH: "."
