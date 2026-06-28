@@ -3,8 +3,6 @@ import "../styles/global.css";
 import { getBaseUrl } from "../lib/utils";
 import Container from "../components/layout/Container.astro";
 import { BannerCarousel } from "../components/sections/BannerCarousel";
-import { fetchGraphQL } from "../lib/graphql";
-import { GET_TOP_BANNERS } from "../lib/queries";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 
 interface Props {
@@ -34,15 +32,6 @@ const siteTitle = title === "Food Focus Thailand | Be Media Focus"
     ? `${title} - Food Focus Thailand | Be Media Focus`
     : "Food Focus Thailand | Be Media Focus";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-// Fetch top banners for all pages
-const topBannersData = await fetchGraphQL<any>(GET_TOP_BANNERS).catch(() => null);
-const topBanners = (topBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
-  title: b.title,
-  image: b.bannerFields?.image?.node?.sourceUrl || "",
-  imageAlt: b.bannerFields?.image?.node?.altText || "",
-  link: b.bannerFields?.link || "",
-}));
 ---
 
 <!doctype html>
@@ -122,15 +111,13 @@ const topBanners = (topBannersData?.positions?.nodes[0]?.banners?.nodes || []).m
     <slot name="header" />
 
     <!-- Top Banner Carousel (shown on all pages) -->
-    {
-      topBanners.length > 0 && (
-        <section class="bg-white">
-          <Container class="py-4">
-            <BannerCarousel banners={topBanners} client:visible />
-          </Container>
-        </section>
-      )
-    }
+    <!-- Data-free island: BannerCarousel fetches /banners.json at runtime so a
+         banner edit only changes that JSON, not every page's HTML. -->
+    <section class="bg-white">
+      <Container class="py-4">
+        <BannerCarousel client:visible />
+      </Container>
+    </section>
 
     <main id="main-content" class="grow bg-[var(--color-bg-light)]">
       <slot />
