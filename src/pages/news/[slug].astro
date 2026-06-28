@@ -5,7 +5,7 @@ import Footer from "../../components/layout/Footer.astro";
 import Container from "../../components/layout/Container.astro";
 import ArticleHeader from "../../components/sections/ArticleHeader.astro";
 import ArticleContent from "../../components/sections/ArticleContent.astro";
-import OtherArticles from "../../components/sections/OtherArticles.astro";
+import { NewsOtherArticlesLive } from "../../components/sections/NewsOtherArticlesLive";
 import { fetchAllPaginated } from "../../lib/graphql";
 import { GET_POSTS_BY_CATEGORY } from "../../lib/queries";
 
@@ -22,32 +22,18 @@ export async function getStaticPaths() {
 
   return posts.map((post: any) => ({
     params: { slug: post.slug },
-    props: {
-      post,
-      sideBarPosts: posts
-        .filter((p: any) => p.slug !== post.slug)
-        .slice(0, 5),
-    },
+    props: { post },
   }));
 }
 
 const { slug } = Astro.params;
-const { post, sideBarPosts } = Astro.props as any;
+const { post } = Astro.props as any;
 const categorySlug = "news";
 const categoryLabel = "News";
 
 if (!post) {
   return Astro.redirect("/404");
 }
-
-const otherArticles = sideBarPosts.map((p: any) => ({
-  title: p.title,
-  image: p.featuredImage?.node?.sourceUrl,
-  imageAlt: p.featuredImage?.node?.altText || "",
-  href: `${categorySlug}/${p.slug}`,
-  excerpt: p.excerpt,
-  category: categorySlug,
-}));
 
 const breadcrumbs = [
   { label: categoryLabel, href: categorySlug },
@@ -82,7 +68,7 @@ const breadcrumbs = [
 
       <!-- Sidebar -->
       <aside class="lg:col-span-1">
-        {otherArticles.length > 0 && <OtherArticles articles={otherArticles} />}
+        <NewsOtherArticlesLive client:visible />
       </aside>
     </div>
   </Container>
