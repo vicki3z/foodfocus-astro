@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 
 .vscode/
+
+# FTP-Deploy-Action sync-state manifests (generated/downloaded locally — never commit)
+*-deploy-sync-state.json
