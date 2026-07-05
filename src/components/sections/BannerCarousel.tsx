@@ -1,5 +1,6 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
+import { getBaseUrl } from "../../lib/utils";
 
 interface Banner {
   title: string;
@@ -9,18 +10,53 @@ interface Banner {
 }
 
 interface BannerCarouselProps {
-  banners: Banner[];
+  /**
+   * Banner list. When omitted, the carousel fetches its own data from the
+   * static `/banners.json` endpoint at runtime. This keeps the SSR island
+   * props data-free so a banner edit only changes `/banners.json` instead of
+   * every page's HTML.
+   */
+  banners?: Banner[];
   autoplayDelay?: number;
   className?: string;
 }
 
 export function BannerCarousel({
-  banners,
+  banners: bannersProp,
   autoplayDelay = 5000,
   className = "",
 }: BannerCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // When no `banners` prop is provided, fetch the list at runtime so this
+  // island carries no inlined banner data in its SSR props.
+  const shouldFetch = bannersProp === undefined;
+  const [fetchedBanners, setFetchedBanners] = useState<Banner[] | null>(null);
+
+  useEffect(() => {
+    if (!shouldFetch) return;
+    let cancelled = false;
+
+    fetch(`${getBaseUrl()}banners.json`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: unknown) => {
+        if (!cancelled) {
+          setFetchedBanners(Array.isArray(data) ? (data as Banner[]) : []);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setFetchedBanners([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [shouldFetch]);
+
+  const banners = shouldFetch ? fetchedBanners : bannersProp;
+  const isLoading = shouldFetch && fetchedBanners === null;
+  const count = banners?.length ?? 0;
 
   const scrollTo = useCallback(
     (index: number) => emblaApi && emblaApi.scrollTo(index),
@@ -43,16 +79,37 @@ export function BannerCarousel({
     };
   }, [emblaApi, onSelect]);
 
+  // Slides may arrive asynchronously (runtime fetch), so re-initialize embla
+  // whenever the resolved banner list changes to make sure it measures the
+  // slides that now exist in the DOM.
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.reInit();
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi, banners]);
+
   // Autoplay
   useEffect(() => {
-    if (!emblaApi || banners.length <= 1) return;
+    if (!emblaApi || count <= 1) return;
 
     const interval = setInterval(() => {
       emblaApi.scrollNext();
     }, autoplayDelay);
 
     return () => clearInterval(interval);
-  }, [emblaApi, autoplayDelay, banners.length]);
+  }, [emblaApi, autoplayDelay, count]);
+
+  // Reserve height while loading to avoid layout shift, then collapse to
+  // nothing if there are no banners.
+  if (isLoading) {
+    return (
+      <div className={`relative ${className}`} aria-hidden="true">
+        <div className="overflow-hidden rounded-lg">
+          <div className="w-full max-w-285 aspect-[1140/200] bg-gray-100 animate-pulse rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   if (!banners || banners.length === 0) {
     return null;
