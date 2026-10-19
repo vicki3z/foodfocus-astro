@@ -80,7 +80,7 @@ const bottomBanners = (bottomBannersData?.positions?.nodes[0]?.banners?.nodes ||
 // Process What's In articles
 const whatsInArticles = (whatsInData?.categories?.nodes[0]?.posts?.nodes || []).map((post: any) => ({
   title: post.title,
-  excerpt: post.excerpt,
+  excerpt: post.postSummary?.summary ?? post.excerpt,
   date: post.date,
   slug: post.slug,
   image: post.featuredImage?.node?.sourceUrl,
