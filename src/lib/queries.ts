@@ -745,6 +745,9 @@ export const GET_HOMEPAGE_HIGHLIGHTS = gql`
                 slug
               }
             }
+            postSummary {
+              summary
+            }
           }
         }
       }
