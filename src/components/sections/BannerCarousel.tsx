@@ -1,61 +1,50 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
-import { getBaseUrl } from "../../lib/utils";
-
-interface Banner {
-  title: string;
-  image: string;
-  imageAlt?: string;
-  link?: string;
-}
+import {
+  fetchBannersByPosition,
+  type Banner,
+  type BannerPosition,
+} from "../../lib/banner-client";
 
 interface BannerCarouselProps {
   /**
-   * Banner list. When omitted, the carousel fetches its own data from the
-   * static `/banners.json` endpoint at runtime. This keeps the SSR island
-   * props data-free so a banner edit only changes `/banners.json` instead of
-   * every page's HTML.
+   * Banners are fetched live from WordPress so scheduled banners appear
+   * without a rebuild.
    */
-  banners?: Banner[];
+  graphqlUrl: string;
+  position: BannerPosition;
   autoplayDelay?: number;
   className?: string;
 }
 
 export function BannerCarousel({
-  banners: bannersProp,
+  graphqlUrl,
+  position,
   autoplayDelay = 5000,
   className = "",
 }: BannerCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // When no `banners` prop is provided, fetch the list at runtime so this
-  // island carries no inlined banner data in its SSR props.
-  const shouldFetch = bannersProp === undefined;
-  const [fetchedBanners, setFetchedBanners] = useState<Banner[] | null>(null);
+  const [banners, setBanners] = useState<Banner[] | null>(null);
 
   useEffect(() => {
-    if (!shouldFetch) return;
     let cancelled = false;
 
-    fetch(`${getBaseUrl()}banners.json`)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: unknown) => {
-        if (!cancelled) {
-          setFetchedBanners(Array.isArray(data) ? (data as Banner[]) : []);
-        }
+    fetchBannersByPosition(graphqlUrl, position)
+      .then((fetchedBanners) => {
+        if (!cancelled) setBanners(fetchedBanners);
       })
       .catch(() => {
-        if (!cancelled) setFetchedBanners([]);
+        if (!cancelled) setBanners([]);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [shouldFetch]);
+  }, [graphqlUrl, position]);
 
-  const banners = shouldFetch ? fetchedBanners : bannersProp;
-  const isLoading = shouldFetch && fetchedBanners === null;
+  const isLoading = banners === null;
   const count = banners?.length ?? 0;
 
   const scrollTo = useCallback(
