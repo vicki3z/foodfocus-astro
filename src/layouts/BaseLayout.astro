@@ -14,6 +14,7 @@ interface Props {
 }
 
 const baseUrl = getBaseUrl();
+const graphqlUrl = import.meta.env.WP_GRAPHQL_URL;
 
 const {
   title,
@@ -111,11 +112,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <slot name="header" />
 
     <!-- Top Banner Carousel (shown on all pages) -->
-    <!-- Data-free island: BannerCarousel fetches /banners.json at runtime so a
-         banner edit only changes that JSON, not every page's HTML. -->
+    <!-- Fetched live from WordPress so scheduled banners show without a rebuild -->
     <section class="bg-white">
       <Container class="py-4">
-        <BannerCarousel client:visible />
+        <BannerCarousel client:visible graphqlUrl={graphqlUrl} position="Top" />
       </Container>
     </section>
 

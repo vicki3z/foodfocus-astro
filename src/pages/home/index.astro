@@ -10,7 +10,6 @@ import Container from "../../components/layout/Container.astro";
 import { fetchGraphQL } from "../../lib/graphql";
 import {
   GET_LATEST_MAGAZINE,
-  GET_BOTTOM_BANNERS,
   GET_POSTS_BY_CATEGORY,
   GET_HOMEPAGE_HIGHLIGHTS,
   GET_HOMEPAGE_ROADMAPS,
@@ -20,10 +19,11 @@ import {
 } from "../../lib/queries";
 import type { Category } from "../../types/generated/graphql";
 
+const graphqlUrl = import.meta.env.WP_GRAPHQL_URL;
+
 // Fetch all homepage data at build time
 const [
   magazineData,
-  bottomBannersData,
   whatsInData,
   newsData,
   advertisementData,
@@ -34,7 +34,6 @@ const [
   seminarsData,
 ] = await Promise.all([
   fetchGraphQL<any>(GET_LATEST_MAGAZINE).catch(() => null),
-  fetchGraphQL<any>(GET_BOTTOM_BANNERS).catch(() => null),
   fetchGraphQL<{ categories: { nodes: Category[] } }>(GET_HOMEPAGE_HIGHLIGHTS).catch(() => null),
   fetchGraphQL<any>(GET_POSTS_BY_CATEGORY, {
     first: 6,
@@ -69,13 +68,6 @@ const magazine = magazineData?.magazineType?.magazines?.nodes?.[0]
       magazineNo: magazineData.magazineType.magazines.nodes[0].magazines?.magazineNo || "",
     }
   : undefined;
-
-const bottomBanners = (bottomBannersData?.positions?.nodes[0]?.banners?.nodes || []).map((b: any) => ({
-  title: b.title,
-  image: b.bannerFields?.image?.node?.sourceUrl || "",
-  imageAlt: b.bannerFields?.image?.node?.altText || "",
-  link: b.bannerFields?.link || "",
-}))
 
 // Process What's In articles
 const whatsInArticles = (whatsInData?.categories?.nodes[0]?.posts?.nodes || []).map((post: any) => ({
@@ -205,15 +197,11 @@ const configurationItems = [...roadmapItems, ...roadshowItems, ...proseriesItems
   }
 
   <!-- Bottom Banner Carousel -->
-  {
-    bottomBanners.length > 0 && (
-      <section class="bg-white">
-        <Container class="py-8">
-          <BannerCarousel banners={bottomBanners} client:visible />
-        </Container>
-      </section>
-    )
-  }
+  <section class="bg-white">
+    <Container class="py-8">
+      <BannerCarousel client:visible graphqlUrl={graphqlUrl} position="Bottom" />
+    </Container>
+  </section>
 
   <Footer slot="footer" />
 </BaseLayout>
